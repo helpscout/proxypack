@@ -1,7 +1,7 @@
 {
   "name": "@helpscout/proxypack",
   "author": "tjbo",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "ProxyPack allows you to run your local WebPack build against production by creating a Proxy server and intercepting asset requests.",
   "main": "dist/index.js",
   "private": false,
