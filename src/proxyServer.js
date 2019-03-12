@@ -48,6 +48,18 @@ class ProxyServer {
       this.mappings.forEach(this.addInterceptForMapping.bind(this))
     this.domain && this.addInterceptForBanner.apply(this)
     this.addInterceptForInfo.apply(this)
+    this.addProcessListeners()
+  }
+
+  addProcessListeners() {
+    process.on('SIGINT', () => {
+      this.close()
+      process.exit(0)
+    })
+  }
+
+  close() {
+    this.proxyServer.close()
   }
 
   addInterceptForInfo() {
@@ -109,12 +121,12 @@ class ProxyServer {
         return new Promise((resolve, reject) => {
           return axios
             .get(this.externalMappings[mapping], { responseType: 'text' })
-            .then(function(response) {
+            .then(function (response) {
               resp.statusCode = 200
               resp.string = response.data
               resolve()
             })
-            .catch(function(error) {
+            .catch(function (error) {
               console.log(error)
               reject()
             })

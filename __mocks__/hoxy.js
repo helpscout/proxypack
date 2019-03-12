@@ -28,6 +28,9 @@ function createServer() {
     intercept: function() {
       return this
     },
+    close: function() {
+      return this
+    }
   }
 }
 

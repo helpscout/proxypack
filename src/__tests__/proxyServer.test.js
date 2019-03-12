@@ -17,7 +17,8 @@ describe('proxyServer', () => {
         'http://localhost:3001/static/js/main.2.1.js',
       'https://beacon-v2.helpscout.net/static/js/main.2.1.js.map':
         'http://localhost:3001/static/js/main.2.1.js.map',
-    }
+    },
+    proxyServer
 
   beforeEach(() => {
     addInterceptForBannerSpy = jest.spyOn(
@@ -43,10 +44,11 @@ describe('proxyServer', () => {
 
   afterEach(() => {
     jest.clearAllMocks()
+    proxyServer.close()
   })
 
   test('should instantiate correctly when given mappings', () => {
-    new ProxyServer({ browser, domain, mappings })
+    proxyServer = new ProxyServer({ browser, domain, mappings })
     expect(addInterceptForBannerSpy).toHaveBeenCalledTimes(1)
     expect(addInterceptForInfoSpy).toHaveBeenCalledTimes(1)
     expect(addInterceptForMappingSpy).toHaveBeenCalledTimes(1)
@@ -54,7 +56,7 @@ describe('proxyServer', () => {
   })
 
   test('should instantiate correctly when given external mappings', () => {
-    new ProxyServer({ browser, domain, externalMappings })
+    proxyServer = new ProxyServer({ browser, domain, externalMappings })
     expect(addInterceptForBannerSpy).toHaveBeenCalledTimes(1)
     expect(addInterceptForInfoSpy).toHaveBeenCalledTimes(1)
     expect(addInterceptForMappingSpy).toHaveBeenCalledTimes(0)
@@ -62,7 +64,7 @@ describe('proxyServer', () => {
   })
 
   test('should update webpack assets', () => {
-    const proxyServer = new ProxyServer({ browser, domain, mappings })
+    proxyServer = new ProxyServer({ browser, domain, mappings })
     proxyServer.updateWebpackAssets(assets)
     expect(proxyServer.webpackAssets).toEqual(assets)
   })
