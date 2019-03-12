@@ -1,6 +1,6 @@
 // `node proxyServer.dev.js`
 // this file is mainly used to dev on without going through the process of waiting for webpack
-const ProxyServer = require('../src/proxyServer')
+const ProxyServer = require('../src/proxyServer.js')
 const mappings = {
   'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist/*': 'webpack',
 }
