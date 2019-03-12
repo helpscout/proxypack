@@ -1,4 +1,4 @@
-const ProxyServer = require('./proxyServer.js')
+const ProxyServer = require('./proxyServer')
 
 function ProxyPackPlugin({ browser, domain, externalMappings, mappings }) {
   this.proxyServer = new ProxyServer({

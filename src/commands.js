@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const program = require('safe-commander')
-const openBrowser = require('./browser.js')
+const openBrowser = require('./browser')
 
 program
   .version('0.1.0')

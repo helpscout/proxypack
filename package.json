@@ -6,9 +6,9 @@
   "main": "src/index.js",
   "private": false,
   "files": [
-    "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "src/*"
   ],
   "publishConfig": {
     "access": "public"
