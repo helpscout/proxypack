@@ -1,5 +1,5 @@
 {
-  "name": "@helpscout/proxy-pack",
+  "name": "@helpscout/proxypack",
   "author": "tjbo",
   "version": "0.0.0",
   "description": "ProxyPack allows you to run your local WebPack build against production by creating a Proxy server and intercepting asset requests.",
@@ -35,5 +35,13 @@
     "hoxy": "^3.3.1",
     "node-fetch": "^2.3.0",
     "safe-commander": "^2.11.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helpscout/proxypack.git"
+  },
+  "bugs": {
+    "url": "https://github.com/helpscout/proxypack/issues"
+  },
+  "homepage": "https://github.com/helpscout/proxypack#readme"
 }

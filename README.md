@@ -58,7 +58,7 @@ To view a ProxyPack Build in a Web Browser you must also have a Spoofed SSL cert
 
 ### Launcher Method
 
-You will need to `npm install proxy-pack -g`.
+You will need to `npm install @helpscout/proxypack -g`.
 
 This will install CLI commands that can launch a Proxied Web Browser that is aware of the ProxyServer running via Webpack.
 
