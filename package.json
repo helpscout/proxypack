@@ -22,6 +22,7 @@
     "format": "zero format",
     "lint": "zero lint",
     "release": "zero release",
+    "precommit": "zero pre-commit",
     "test": "zero test --coverage",
     "validate": "zero validate"
   },
