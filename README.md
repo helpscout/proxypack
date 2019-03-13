@@ -64,9 +64,9 @@ This will install CLI commands that can launch a Proxied Web Browser that is awa
 
 For example the command `proxypack` will open a Proxied Web Browser in `chrome`.
 
-You can pass the browser flag, and the host flag to target specific builds and override the values in `ProxyPackPlugin` config.
+You can pass the `browser` and / or `domain` flag, to target specific builds and override the values in `ProxyPackPlugin` config.
 
-For example: `proxypack --host=https://secure.helpscout.net --browser=firefox`. Will open `https://secure.helpscout.net` in `Firefox` and Proxy all the assets you've told Webpack about in `mappings` and `externalMappings`.
+For example: `proxypack --domain=https://secure.helpscout.net --browser=firefox`. Will open `https://secure.helpscout.net` in `Firefox` and Proxy all the assets you've told Webpack about in `mappings` and `externalMappings`.
 
 ### Standalone Method
 
