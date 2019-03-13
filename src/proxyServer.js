@@ -1,7 +1,6 @@
 const axios = require('axios')
 const fs = require('fs')
 const path = require('path')
-const hoxy = require('hoxy')
 const keyFile = path.resolve(__dirname, 'proxypack.key.pem')
 const certFile = path.resolve(__dirname, 'proxypack.crt.pem')
 
@@ -10,6 +9,7 @@ class ProxyServer {
     browser = '',
     domain = '',
     externalMappings = {},
+    hoxy = require('hoxy'),
     mappings = {},
   } = {}) {
     this.browser = browser
