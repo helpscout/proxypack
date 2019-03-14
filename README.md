@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/helpscout/proxypack.svg?branch=master)](https://travis-ci.org/helpscout/proxypack)
 [![npm version](https://badge.fury.io/js/%40helpscout%2Fproxypack.svg)](https://badge.fury.io/js/%40helpscout%2Fproxypack)
 
-> ProxyPack is WebPack Plugin that allows you to serve Local Assets to a Production Website
+> ProxyPack is WebPack Plugin that allows you to serve Local Assets from Wepack agasint a Production Website in a Web Browser
 
 ## Table of Contents
 
@@ -13,6 +13,7 @@
 - [Webpack Setup](#webpack-setup)
   - [Example 1:](#example-1)
 - [External Mappings:](#external-mappings)
+- [Local Mappings](#local-mappings)
   - [Install SSL Certificate](#install-ssl-certificate)
 - [To View A Proxy Build](#to-view-a-proxy-build)
   - [Launcher Method](#launcher-method)
@@ -38,13 +39,13 @@ new ProxyPackPlugin({
 
 ```
 
-#### Browser
-
-The browser will be the Web Browser you wish to use. Examples inlcude: `chrome, chromium, firefox, ie, opera, safari, phantomjs`
-
-#### Domain
-
-If a domain is included it will also get a warning banner injected.
+| Value            | Type   | Of                                                      |
+| ---------------- | ------ | ------------------------------------------------------- |
+| browser          | String | chrome, chromium, firefox, ie, opera, safari, phantomjs |
+| domain           | String | WebSite URL                                             |
+| localMappings    | Dict   | Mappings of files on the local file system              |
+| mappings         | Array  | Production Asset Folder                                 |
+| externalMappings | Dict   | Production Assets / Folders                             |
 
 #### Mappings
 
@@ -54,10 +55,12 @@ For example a file sitting at `https://dhmmnd775wlnp.cloudfront.net/777dddkkh/js
 
 ## External Mappings:
 
-You can also target Non-Webpack files or other Webpack builds with the dictionary `externalMappings`.
+You can also target Non-Webpack files or other Webpack builds with the dictionary `externalMappings`, these will be resolved with a `GET Request`.
 
 ```
 new ProxyPackPlugin({
+        browser: 'chrome',
+        domain: 'https://secure.helpscout.net',
         externalMappings: {
             ' https://beacon-v2.helpscout.net/static/js/main.2.1.f3df77f2.js': 'http://localhost:3001/static/js/main.2.1.js'
           }
@@ -66,6 +69,17 @@ new ProxyPackPlugin({
 ```
 
 In this example we are actually running another Webpack server where `http://localhost:3001/static/js/main.2.1.js` is built and we are linking that from our Proxy Server.
+
+```
+new ProxyPackPlugin({
+        browser: 'chrome',
+        domain: 'https://secure.helpscout.net',
+        localMappings: {
+         'https://dhmmnd775wlnp.cloudfront.net/*/css/styles.css' : `${__dirname}/site/css/styles.css`
+        },
+```
+
+## Local Mappings
 
 ### Install SSL Certificate
 
