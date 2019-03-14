@@ -9,16 +9,23 @@ class ProxyServer {
     browser = '',
     domain = '',
     externalMappings = {},
+    localMappings = {},
     hoxy = require('hoxy'),
     mappings = {},
   } = {}) {
     this.browser = browser
     this.domain = domain
     this.externalMappings = externalMappings
+    this.localMappings = localMappings
     this.options = {}
     this.port = 7777
     this.webpackAssets = {}
     this.mappings = mappings
+    this.warningMessage = [
+      '<div style="display: block; text-align: center; padding: 7px; width: 100%; background-color: #ffcc00; color: #000000; border-top: 1px solid #fff;">',
+      '🎭 This browser is connected to ProxyPack and some files might be coming from alternative sources.',
+      '</div>',
+    ]
 
     try {
       // get SSL cert from local file dir
@@ -45,8 +52,14 @@ class ProxyServer {
       )
 
     this.mappings.length &&
-      this.mappings.forEach(this.addInterceptForMapping.bind(this))
+      this.mappings.forEach(this.addInterceptForWebpackMapping.bind(this))
     this.domain && this.addInterceptForBanner.apply(this)
+
+    this.localMappings &&
+      Object.keys(this.localMappings).forEach(
+        this.addInterceptForLocalMapping.bind(this),
+      )
+
     this.addInterceptForInfo.apply(this)
     this.addProcessListeners()
   }
@@ -98,11 +111,27 @@ class ProxyServer {
         as: '$',
       },
       (req, resp, cycle) => {
-        resp
-          .$('body')
-          .prepend(
-            '<div style="display: block; text-align: center; padding: 7px; width: 100%; background-color: #E89635; color: #fff; border-top: 1px solid #fff;">🎭 This web browser is currently connected to ProxyPack.</div>',
-          )
+        resp.$('body').prepend(this.warningMessage.join(' '))
+      },
+    )
+  }
+
+  addInterceptForLocalMapping(mapping) {
+    this.proxyServer.intercept(
+      {
+        phase: 'request',
+        method: 'GET',
+        as: 'string',
+        fullUrl: mapping,
+      },
+      (req, resp, cycle) => {
+        try {
+          const file = fs.readFileSync(this.localMappings[mapping], 'utf8')
+          resp.statusCode = 200
+          resp.string = file
+        } catch (error) {
+          console.log('There was an error fetching a local file.')
+        }
       },
     )
   }
@@ -121,12 +150,12 @@ class ProxyServer {
         return new Promise((resolve, reject) => {
           return axios
             .get(this.externalMappings[mapping], { responseType: 'text' })
-            .then(function (response) {
+            .then(function(response) {
               resp.statusCode = 200
               resp.string = response.data
               resolve()
             })
-            .catch(function (error) {
+            .catch(function(error) {
               console.log(error)
               reject()
             })
@@ -135,7 +164,7 @@ class ProxyServer {
     )
   }
 
-  addInterceptForMapping(mapping) {
+  addInterceptForWebpackMapping(mapping) {
     this.proxyServer.intercept(
       {
         phase: 'request',

@@ -5,6 +5,10 @@ const mappings = {
   'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist/*': 'webpack',
 }
 
+const localMappings = {
+  'https://dhmmnd775wlnp.cloudfront.net/*/css/styles.css': `${__dirname}/site/css/styles.css`,
+}
+
 const proxyServer = new ProxyServer({ port: 7777, mappings })
 
 // just some fake files to serve up

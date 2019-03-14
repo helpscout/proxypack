@@ -12,9 +12,13 @@ const interceptSpy = jest.fn(),
     ProxyServer.prototype,
     'addInterceptForInfo',
   ),
-  addInterceptForMappingSpy = jest.spyOn(
+  addInterceptForLocalMappingSpy = jest.spyOn(
     ProxyServer.prototype,
-    'addInterceptForMapping',
+    'addInterceptForLocalMapping',
+  ),
+  addInterceptForWebpackMappingSpy = jest.spyOn(
+    ProxyServer.prototype,
+    'addInterceptForWebpackMapping',
   ),
   addInterceptForExternalMappingSpy = jest.spyOn(
     ProxyServer.prototype,
@@ -26,7 +30,10 @@ const interceptSpy = jest.fn(),
   },
   browser = 'firefox',
   domain = 'secure.helpscout.net',
-  mappings = ['https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist/*', 'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist2/*'],
+  mappings = [
+    'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist/*',
+    'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist2/*',
+  ],
   externalMappings = {
     'https://beacon-v2.helpscout.net/static/js/main*':
       'http://localhost:3001/static/js/main.2.1.js',
@@ -38,7 +45,10 @@ const interceptSpy = jest.fn(),
       intercept: interceptSpy,
       on: onSpy,
     }
-  })
+  }),
+  localMappings = {
+    'https://dhmmnd775wlnp.cloudfront.net/*/css/styles.css': `${__dirname}/site/css/styles.css`,
+  }
 
 function Proxy() {
   return {
@@ -47,9 +57,9 @@ function Proxy() {
 }
 
 let hoxy = {
-  createServer: function () {
+  createServer: function() {
     return new Proxy()
-  }
+  },
 }
 
 let proxyServer
@@ -63,7 +73,7 @@ describe('proxyServer', () => {
     proxyServer = new ProxyServer({ browser, domain, hoxy, mappings })
     expect(addInterceptForBannerSpy).toHaveBeenCalledTimes(1)
     expect(addInterceptForInfoSpy).toHaveBeenCalledTimes(1)
-    expect(addInterceptForMappingSpy).toHaveBeenCalledTimes(2)
+    expect(addInterceptForWebpackMappingSpy).toHaveBeenCalledTimes(2)
     expect(addInterceptForExternalMappingSpy).toHaveBeenCalledTimes(0)
     expect(interceptSpy).toHaveBeenCalledTimes(4)
     expect(onSpy).toHaveBeenCalledTimes(1)
@@ -74,24 +84,103 @@ describe('proxyServer', () => {
     proxyServer = new ProxyServer({ browser, domain, hoxy, externalMappings })
     expect(addInterceptForBannerSpy).toHaveBeenCalledTimes(1)
     expect(addInterceptForInfoSpy).toHaveBeenCalledTimes(1)
-    expect(addInterceptForMappingSpy).toHaveBeenCalledTimes(0)
+    expect(addInterceptForWebpackMappingSpy).toHaveBeenCalledTimes(0)
     expect(addInterceptForExternalMappingSpy).toHaveBeenCalledTimes(2)
     expect(interceptSpy).toHaveBeenCalledTimes(4)
     expect(listenSpy).toHaveBeenCalledTimes(1)
   })
 
-  test('should update webpack assets', () => {
-    proxyServer = new ProxyServer({ browser, domain, hoxy, mappings })
-    proxyServer.updateWebpackAssets(assets)
-    expect(proxyServer.webpackAssets).toEqual(assets)
+  test('should instantiate correctly when given local mappings', () => {
+    proxyServer = new ProxyServer({ browser, domain, hoxy, localMappings })
+    expect(addInterceptForBannerSpy).toHaveBeenCalledTimes(1)
+    expect(addInterceptForInfoSpy).toHaveBeenCalledTimes(1)
+    expect(addInterceptForWebpackMappingSpy).toHaveBeenCalledTimes(0)
+    expect(addInterceptForLocalMappingSpy).toHaveBeenCalledTimes(1)
+    expect(interceptSpy).toHaveBeenCalledTimes(3)
+    expect(listenSpy).toHaveBeenCalledTimes(1)
   })
 
   test('should have an SSL cert', () => {
     proxyServer = new ProxyServer({ browser, domain, hoxy, mappings })
-    const keyFile = fs.readFileSync(path.resolve(__dirname, '../proxypack.key.pem'))
-    const certFile = fs.readFileSync(path.resolve(__dirname, '../proxypack.crt.pem'))
+    const keyFile = fs.readFileSync(
+      path.resolve(__dirname, '../proxypack.key.pem'),
+    )
+    const certFile = fs.readFileSync(
+      path.resolve(__dirname, '../proxypack.crt.pem'),
+    )
     expect(proxyServer.options.certAuthority.key).toEqual(keyFile)
     expect(proxyServer.options.certAuthority.cert).toEqual(certFile)
   })
 
+  test('addInterceptForInfo', () => {
+    proxyServer = new ProxyServer({ browser, domain, hoxy, mappings })
+    jest.clearAllMocks()
+    proxyServer.addInterceptForInfo()
+    expect(addInterceptForInfoSpy).toHaveBeenCalledTimes(1)
+    expect(interceptSpy).toHaveBeenCalledTimes(1)
+    expect(interceptSpy.mock.calls[0][0]).toEqual({
+      phase: 'request',
+      fullUrl: 'http://localhost:7777/info',
+      as: 'string',
+    })
+  })
+
+  test('addInterceptForBanner', () => {
+    proxyServer = new ProxyServer({ browser, domain, hoxy, mappings })
+    jest.clearAllMocks()
+    proxyServer.addInterceptForBanner()
+    expect(addInterceptForBannerSpy).toHaveBeenCalledTimes(1)
+    expect(interceptSpy).toHaveBeenCalledTimes(1)
+    expect(interceptSpy.mock.calls[0][0]).toEqual({
+      contentType: 'text/html; charset=UTF-8',
+      phase: 'response',
+      fullUrl: proxyServer.domain + '/*',
+      as: '$',
+    })
+  })
+
+  test('addInterceptForLocalMapping', () => {
+    proxyServer = new ProxyServer({ browser, domain, hoxy, localMappings })
+    jest.clearAllMocks()
+    proxyServer.addInterceptForLocalMapping(Object.keys(localMappings)[0])
+    expect(interceptSpy).toHaveBeenCalledTimes(1)
+    expect(interceptSpy.mock.calls[0][0]).toEqual({
+      phase: 'request',
+      method: 'GET',
+      as: 'string',
+      fullUrl: Object.keys(localMappings)[0],
+    })
+  })
+
+  test('addInterceptForExternalMapping', () => {
+    proxyServer = new ProxyServer({ browser, domain, hoxy, externalMappings })
+    jest.clearAllMocks()
+    proxyServer.addInterceptForExternalMapping(Object.keys(externalMappings)[0])
+    expect(interceptSpy).toHaveBeenCalledTimes(1)
+    expect(interceptSpy.mock.calls[0][0]).toEqual({
+      phase: 'request',
+      method: 'GET',
+      as: 'string',
+      fullUrl: Object.keys(externalMappings)[0],
+    })
+  })
+
+  test('addInterceptForWebpackMapping', () => {
+    proxyServer = new ProxyServer({ browser, domain, hoxy, mappings })
+    jest.clearAllMocks()
+    proxyServer.addInterceptForWebpackMapping(Object.keys(mappings)[0])
+    expect(interceptSpy).toHaveBeenCalledTimes(1)
+    expect(interceptSpy.mock.calls[0][0]).toEqual({
+      phase: 'request',
+      method: 'GET',
+      as: 'string',
+      fullUrl: Object.keys(mappings)[0],
+    })
+  })
+
+  test('updateWebpackAssets', () => {
+    proxyServer = new ProxyServer({ browser, domain, hoxy, mappings })
+    proxyServer.updateWebpackAssets(assets)
+    expect(proxyServer.webpackAssets).toEqual(assets)
+  })
 })
