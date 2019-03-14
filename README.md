@@ -16,7 +16,7 @@
 - [Webpack Mappings](#webpack-mappings)
 - [External Mappings:](#external-mappings)
 - [Local Mappings](#local-mappings)
-  - [Install SSL Certificate](#install-ssl-certificate)
+- [Install SSL Certificate](#install-ssl-certificate)
 - [To View A Proxy Build](#to-view-a-proxy-build)
   - [Launcher Method](#launcher-method)
   - [Standalone Method](#standalone-method)
@@ -74,6 +74,10 @@ new ProxyPackPlugin({
 
 In this example we are actually running another Webpack server where `http://localhost:3001/static/js/main.2.1.js` is built and we are linking that from our Proxy Server.
 
+## Local Mappings
+
+Local Mappings are resolved as `UTF8` through `fs.readFileSync()`, and are for paths that are on the local file system.
+
 ```
 new ProxyPackPlugin({
         browser: 'chrome',
@@ -83,9 +87,7 @@ new ProxyPackPlugin({
         },
 ```
 
-## Local Mappings
-
-### Install SSL Certificate
+## Install SSL Certificate
 
 To view a ProxyPack Build in a Web Browser you must also have a Spoofed SSL certificate installed on your system.
 
