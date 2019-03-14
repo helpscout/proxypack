@@ -1,0 +1,2 @@
+- add a filter to make sure that the request is from the domain that is declared
+- add a how to or other explanation

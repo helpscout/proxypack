@@ -10,6 +10,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+- [API](#api)
 - [Webpack Setup](#webpack-setup)
   - [Example 1:](#example-1)
 - [External Mappings:](#external-mappings)
@@ -21,6 +22,16 @@
 - [Thanks](#thanks)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## API
+
+| Value            | Type   | Of                                                      |
+| ---------------- | ------ | ------------------------------------------------------- |
+| browser          | String | chrome, chromium, firefox, ie, opera, safari, phantomjs |
+| domain           | String | WebSite URL                                             |
+| localMappings    | Dict   | Mappings of files on the local file system              |
+| mappings         | Array  | Production Asset Folder                                 |
+| externalMappings | Dict   | Production Assets / Folders                             |
 
 ## Webpack Setup
 
@@ -38,14 +49,6 @@ new ProxyPackPlugin({
       })
 
 ```
-
-| Value            | Type   | Of                                                      |
-| ---------------- | ------ | ------------------------------------------------------- |
-| browser          | String | chrome, chromium, firefox, ie, opera, safari, phantomjs |
-| domain           | String | WebSite URL                                             |
-| localMappings    | Dict   | Mappings of files on the local file system              |
-| mappings         | Array  | Production Asset Folder                                 |
-| externalMappings | Dict   | Production Assets / Folders                             |
 
 #### Mappings
 
