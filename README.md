@@ -14,7 +14,7 @@
 - [Webpack Setup](#webpack-setup)
   - [Example 1:](#example-1)
 - [Webpack Mappings](#webpack-mappings)
-- [External Mappings:](#external-mappings)
+- [External Mappings](#external-mappings)
 - [Local Mappings](#local-mappings)
 - [Install SSL Certificate](#install-ssl-certificate)
 - [To View A Proxy Build](#to-view-a-proxy-build)
@@ -57,9 +57,9 @@ new ProxyPackPlugin({
 
 For example a file sitting at `https://dhmmnd775wlnp.cloudfront.net/777dddkkh/js/apps/dist/dashboard.js`, will resolve to the dist folder of your webpack targeting the file `dashboard.js`.
 
-## External Mappings:
+## External Mappings
 
-You can also target Non-Webpack files or other Webpack builds with the dictionary `externalMappings`, these will be resolved with a `GET Request`.
+You can also target Non-Webpack files or other Webpack builds with the dictionary `externalMappings`, these will be resolved with a standard `HTTP GET REQUEST`.
 
 ```
 new ProxyPackPlugin({
