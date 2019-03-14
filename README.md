@@ -1,6 +1,25 @@
 # ProxyPack
 
-ProxyPack is WebPack Plugin that allows you to serve Local Assets to a Production Website.
+[![Build Status](https://travis-ci.org/helpscout/proxypack.svg?branch=master)](https://travis-ci.org/helpscout/proxypack)
+[![npm version](https://badge.fury.io/js/%40helpscout%2Fproxypack.svg)](https://badge.fury.io/js/%40helpscout%2Fproxypack)
+
+> ProxyPack is WebPack Plugin that allows you to serve Local Assets to a Production Website
+
+## Table of Contents
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Webpack Setup](#webpack-setup)
+  - [Example 1:](#example-1)
+- [External Mappings:](#external-mappings)
+  - [Install SSL Certificate](#install-ssl-certificate)
+- [To View A Proxy Build](#to-view-a-proxy-build)
+  - [Launcher Method](#launcher-method)
+  - [Standalone Method](#standalone-method)
+- [Thanks](#thanks)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Webpack Setup
 
