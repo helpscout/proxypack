@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/helpscout/proxypack.svg?branch=master)](https://travis-ci.org/helpscout/proxypack)
 [![npm version](https://badge.fury.io/js/%40helpscout%2Fproxypack.svg)](https://badge.fury.io/js/%40helpscout%2Fproxypack)
 
-> ProxyPack is WebPack Plugin that allows you to serve Local Assets from Wepack agasint a Production Website in a Web Browser
+> ProxyPack is WebPack Plugin that allows you to serve Local Assets from Wepack against a Production Website in a Web Browser
 
 ## Table of Contents
 
@@ -13,6 +13,7 @@
 - [API](#api)
 - [Webpack Setup](#webpack-setup)
   - [Example 1:](#example-1)
+- [Webpack Mappings](#webpack-mappings)
 - [External Mappings:](#external-mappings)
 - [Local Mappings](#local-mappings)
   - [Install SSL Certificate](#install-ssl-certificate)
@@ -50,7 +51,7 @@ new ProxyPackPlugin({
 
 ```
 
-#### Mappings
+## Webpack Mappings
 
 `mappings` takes a array of mappings you wish to map to WebPack. In the above example anything sitting on the Cloudfront Server at `'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist/*'` will be mapped (via Proxy) to the Webpack build when running ProxyPack.
 
