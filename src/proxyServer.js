@@ -22,7 +22,7 @@ class ProxyServer {
     this.webpackAssets = {}
     this.mappings = mappings
     this.warningMessage = [
-      '<div style="display: block; text-align: center; padding: 7px; width: 100%; background-color: #ffcc00; color: #000000; border-top: 1px solid #fff;">',
+      '<div style="display: block; text-align: center; padding: 7px; width: 100%; background-color: #ffcc00; color: #000000; border-top: 1px solid #fff; box-sizing: border-box;">',
       '🎭 This browser is connected to ProxyPack and some files might be coming from alternative sources.',
       '</div>',
     ]
