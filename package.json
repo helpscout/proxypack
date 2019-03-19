@@ -3,7 +3,7 @@
   "author": "tjbo",
   "version": "0.0.8",
   "description": "ProxyPack allows you to run your local WebPack build against production by creating a Proxy server and intercepting asset requests.",
-  "main": "src/index.js",
+  "main": "src/webpack/index.js",
   "private": false,
   "files": [
     "README.md",
@@ -14,11 +14,13 @@
     "access": "public"
   },
   "bin": {
-    "proxypack": "src/commands.js"
+    "proxypack": "./  src/cli/index.js"
   },
   "scripts": {
     "prestart": "zero prestart",
     "build": "zero build",
+    "dev:proxy": "npx nodemon ./dev/proxyServer.js",
+    "dev:browser": "npx ./dev/browser.js",
     "format": "zero format",
     "lint": "zero lint",
     "release": "zero release",
@@ -28,7 +30,10 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@helpscout/zero": "^3.0.2"
+    "@helpscout/zero": "^3.0.2",
+    "axios-mock-adapter": "^1.16.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "nodemon": "^1.18.10"
   },
   "dependencies": {
     "@james-proxy/james-browser-launcher": "^1.3.4",

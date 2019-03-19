@@ -42,13 +42,17 @@ function launchBrowser({ browser, domain }) {
 
 function openBrowser({ browser = '', domain = '' }) {
   axios
-    .get('http://localhost:7777/info', { headers: { domain } })
+    .get('http://localhost:7777/cli', { headers: { domain } })
     .then(response => {
-      const info = response.data
-      browser = browser || info.browser || 'chrome'
-      domain = domain || info.domain
-      //TODO add validation as some options break ProxyPack
-      launchBrowser({ browser, domain })
+      const {
+        browser: browserFromServer,
+        domain: domainFromServer,
+      } = response.data
+      // if we don't have a browser passed in via CLI it gets the value from the proxyServer
+      const _browser = browser || browserFromServer || 'chrome'
+      const _domain = domain || domainFromServer
+      // TODO add validation as some options break ProxyPack
+      launchBrowser({ browser: _browser, domain: _domain })
     })
     .catch(error => {
       if (error.code === 'ECONNREFUSED') {

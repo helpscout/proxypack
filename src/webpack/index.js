@@ -1,18 +1,18 @@
-const ProxyServer = require('./proxyServer')
+const proxyServer = require('../proxyServer')
 
 function ProxyPackPlugin({
   browser,
   domain,
   externalMappings,
   localMappings,
-  mappings,
+  webpackMappings,
 }) {
-  this.proxyServer = new ProxyServer({
+  proxyServer.init({
     browser,
     domain,
     externalMappings,
     localMappings,
-    mappings,
+    webpackMappings,
   })
 }
 
@@ -29,7 +29,7 @@ ProxyPackPlugin.prototype.apply = function(compiler) {
           files[filename] = compilation.assets[filename].source()
         })
       })
-      this.proxyServer.updateWebpackAssets(files)
+      proxyServer && proxyServer.updateWebpackAssets(files)
       callback()
     }.bind(this),
   )
