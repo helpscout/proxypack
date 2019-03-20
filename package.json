@@ -26,6 +26,7 @@
     "release": "zero release",
     "precommit": "zero pre-commit",
     "test": "zero test --coverage",
+    "test:watch": "zero test --coverage --watch",
     "validate": "zero validate"
   },
   "license": "MIT",

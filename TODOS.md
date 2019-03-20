@@ -1,8 +1,12 @@
 - add a filter to make sure that the request is from the domain that is declared (the target domain of the browser)
 - add a how to or other explanation
-- add passing of mappings from CLI
 - add tests
 - add logging
 - add refresh
-- add hot module loading?
 - check exit process listeners, make sure they get cleaned up, that no node processes are left hanging
+
+Maybe?
+
+- add webpack building thing to banner
+- add hot module loading?
+- add passing of mappings from CLI

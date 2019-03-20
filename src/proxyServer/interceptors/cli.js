@@ -1,11 +1,18 @@
 // info is requested by the CLI command
-module.exports = function({ addInterceptorForBanner, getState, proxyServer }) {
+module.exports = function({
+  addInterceptorForBanner,
+  getState,
+  logIntercept,
+  proxyServer,
+}) {
   function addInterceptor() {
     const { port } = getState()
+    const targetUrl = 'http://localhost:' + port + '/cli'
+
     proxyServer.intercept(
       {
         phase: 'request',
-        fullUrl: 'http://localhost:' + port + '/cli',
+        fullUrl: targetUrl,
         as: 'string',
       },
       (request, response) => {
@@ -21,6 +28,12 @@ module.exports = function({ addInterceptorForBanner, getState, proxyServer }) {
           console.log(`A ProxyPack browser connected.`)
           response.statusCode = 200
           response.string = JSON.stringify(state)
+          logIntercept({
+            request,
+            response,
+            statusCode: 200,
+            targetUrl,
+          })
         }
       },
     )

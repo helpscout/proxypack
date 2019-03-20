@@ -56,6 +56,7 @@ function addInterceptors(proxyServer) {
   require('./interceptors/local')({ localMappings, proxyServer })
   require('./interceptors/cli')({
     addInterceptorForBanner,
+    logIntercept,
     getState,
     proxyServer,
   })
