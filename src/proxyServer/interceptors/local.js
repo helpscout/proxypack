@@ -1,5 +1,3 @@
-const fs = require('fs')
-
 module.exports = function({ localMappings, logIntercept, proxyServer }) {
   function addInterceptor(mapping) {
     const [targetUrl, localLocation] = mapping
