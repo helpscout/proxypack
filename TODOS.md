@@ -20,3 +20,4 @@ TRIAGE:
 - check if user has SSL installed
 - make mechanism to 404 links like GA and sentry
 - remote testing for jest (ie if your tests take too long to run)
+- add throttling to commands
