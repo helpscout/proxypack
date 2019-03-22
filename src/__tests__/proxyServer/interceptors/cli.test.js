@@ -1,6 +1,7 @@
 const cliInterceptor = require('../../../proxyServer/interceptors/cli.js')
+const proxyServer = require('../../../__mocks__/proxyServer')
 
-describe('cli interceptor', () => {
+describe('cliInterceptor', () => {
   const addInterceptorForBannerSpy = jest.fn()
   const port = 8888
   const domain = 'secure.helpscout.net'
@@ -8,17 +9,9 @@ describe('cli interceptor', () => {
     domain,
     port,
   })
-  const logInterceptSpy = jest.fn()
-  const proxyServer = {
-    simulatedCallback: null,
-    simulate: function(request, response) {
-      return this.simulatedCallback(request, response)
-    },
-    intercept: jest.fn(function(object, callback) {
-      this.simulatedCallback = callback
-    }),
-  }
+  const targetUrl = 'localhost:8888/cli'
 
+  const logInterceptSpy = jest.fn()
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -27,13 +20,15 @@ describe('cli interceptor', () => {
     cliInterceptor({
       addInterceptorForBanner: addInterceptorForBannerSpy,
       getState: getStateSpy,
+      logIntercept: logInterceptSpy,
       proxyServer: proxyServer,
+      targetUrl,
     })
     expect(proxyServer.intercept).toHaveReturnedTimes(1)
     expect(proxyServer.intercept).toHaveBeenCalledWith(
       {
         as: 'string',
-        fullUrl: 'http://localhost:' + port + '/cli',
+        fullUrl: targetUrl,
         phase: 'request',
       },
       expect.any(Function),
@@ -55,8 +50,9 @@ describe('cli interceptor', () => {
       getState: getStateSpy,
       logIntercept: logInterceptSpy,
       proxyServer: proxyServer,
+      targetUrl,
     })
-    proxyServer.simulate(request, response)
+    proxyServer.simulate(request, response, {}, targetUrl)
     expect(addInterceptorForBannerSpy).toHaveBeenCalledWith('test.com')
   })
 
@@ -74,7 +70,7 @@ describe('cli interceptor', () => {
       logIntercept: logInterceptSpy,
       proxyServer: proxyServer,
     })
-    proxyServer.simulate(request, response)
+    proxyServer.simulate(request, response, {}, targetUrl)
     expect(addInterceptorForBannerSpy).not.toBeCalled()
   })
 
@@ -86,14 +82,13 @@ describe('cli interceptor', () => {
     const response = {
       headers: {},
     }
-    const targetUrl = 'http://localhost:' + port + '/cli'
     cliInterceptor({
       addInterceptorForBanner: addInterceptorForBannerSpy,
       getState: getStateSpy,
       logIntercept: logInterceptSpy,
       proxyServer: proxyServer,
     })
-    proxyServer.simulate(request, response)
+    proxyServer.simulate(request, response, {}, targetUrl)
     expect(logInterceptSpy).toHaveBeenCalledTimes(1)
     expect(logInterceptSpy).toHaveBeenCalledWith({
       request,
@@ -117,7 +112,7 @@ describe('cli interceptor', () => {
       logIntercept: logInterceptSpy,
       proxyServer: proxyServer,
     })
-    proxyServer.simulate(request, response)
+    proxyServer.simulate(request, response, null, targetUrl)
     expect(logInterceptSpy).not.toBeCalled()
   })
 })

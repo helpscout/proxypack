@@ -13,10 +13,13 @@ let state = {
     ),
   },
   domain: '',
+  appUrls: {
+    cli: 'http://localhost:7777/cli',
+  },
   intercepts: [],
   isInit: false,
   port: 7777,
-  webpackAssets: [],
+  webpackOutputPath: '',
 }
 
 function getState() {
@@ -25,11 +28,6 @@ function getState() {
 
 function setState(newState) {
   state = { ...state, ...newState }
-}
-
-function getWebpackAsset(filename) {
-  console.log('get', filename)
-  return state.webpackAssets[filename]
 }
 
 function logIntercept(intercept) {
@@ -42,23 +40,27 @@ function addInterceptorForBanner(domain) {
 
 function addInterceptors(proxyServer) {
   const {
+    appUrls,
     domain,
     externalMappings,
     localMappings,
+    webpackOutputPath,
     webpackMappings,
   } = getState()
   require('./interceptors/webpack')({
-    getWebpackAsset,
+    logIntercept,
     proxyServer,
     webpackMappings,
+    webpackOutputPath,
   })
   require('./interceptors/external')({ externalMappings, proxyServer })
-  require('./interceptors/local')({ localMappings, proxyServer })
+  require('./interceptors/local')({ localMappings, logIntercept, proxyServer })
   require('./interceptors/cli')({
     addInterceptorForBanner,
     logIntercept,
     getState,
     proxyServer,
+    targetUrl: appUrls.cli,
   })
   addInterceptorForBanner(domain)
 }
@@ -73,16 +75,14 @@ const proxyServer = hoxy
   })
 
 module.exports = {
-  log: function() {},
-  updateWebpackAssets: function(files) {
-    setState({ webpackAssets: files })
+  updateWebpackOutputPath: function(_path) {
+    setState({ webpackOutputPath: _path })
   },
   init({
     browser = '',
     domain = '',
     externalMappings = {},
     localMappings = {},
-    webpackAssets = {},
     webpackMappings = [],
   }) {
     const { isInit } = getState()
@@ -93,7 +93,6 @@ module.exports = {
         externalMappings,
         isInit: true,
         localMappings,
-        webpackAssets,
         webpackMappings,
       })
     }

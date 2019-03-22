@@ -1,7 +1,22 @@
 const path = require('path')
 
-module.exports = function({ proxyServer, webpackMappings, getWebpackAsset }) {
+module.exports = function({
+  logIntercept,
+  proxyServer,
+  webpackMappings,
+  webpackOutputPath,
+}) {
   function addInterceptor(targetUrl) {
+    function handleInterceptor(request, response, cycle) {
+      const filename = path.parse(request.url).base
+      logIntercept({
+        response,
+        request,
+        targetUrl: targetUrl,
+      })
+      return cycle.serve(webpackOutputPath + filename)
+    }
+
     proxyServer.intercept(
       {
         phase: 'request',
@@ -9,14 +24,7 @@ module.exports = function({ proxyServer, webpackMappings, getWebpackAsset }) {
         as: 'string',
         fullUrl: targetUrl,
       },
-      (request, response, cycle) => {
-        const filename = path.parse(request.url).base
-        const webpackFile = getWebpackAsset(filename)
-        if (webpackFile) {
-          response.statusCode = 203
-          response.string = webpackFile
-        }
-      },
+      handleInterceptor,
     )
   }
   webpackMappings && webpackMappings.forEach(addInterceptor)

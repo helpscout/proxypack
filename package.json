@@ -14,7 +14,7 @@
     "access": "public"
   },
   "bin": {
-    "proxypack": "./  src/cli/index.js"
+    "proxypack": "./src/cli/index.js"
   },
   "scripts": {
     "prestart": "zero prestart",
