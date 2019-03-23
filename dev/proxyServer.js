@@ -9,8 +9,8 @@ proxyServer.init({
   localMappings: {
     'https://dhmmnd775wlnp.cloudfront.net/*/css/styles.css': `${__dirname}/site/css/styles.css`,
   },
-  webpackAssets: {
-    'dashboard.js': 'mock source code',
-    'vendors.js': 'mock source code',
+  externalMappings: {
+    'https://beacon-v2.helpscout.net/static/js/main*':
+      'http://localhost:3001/static/js/main.2.1.js',
   },
 })

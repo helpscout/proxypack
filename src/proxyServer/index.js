@@ -13,6 +13,7 @@ let state = {
     ),
   },
   domain: '',
+  externalResources: {},
   appUrls: {
     cli: 'http://localhost:7777/cli',
   },
@@ -30,12 +31,26 @@ function setState(newState) {
   state = { ...state, ...newState }
 }
 
+function getExternalResource(proxyUrl) {
+  return state.externalResources[proxyUrl]
+}
+
 function logIntercept(intercept) {
   setState({ intercepts: [...state.intercepts, intercept] })
 }
 
+function updateExternalResource(externalResource) {
+  setState({
+    externalResources: { ...state.externalResources, ...externalResource },
+  })
+}
+
 function addInterceptorForBanner(domain) {
   require('./interceptors/banner')({ proxyServer, domain })
+}
+
+function onExternalResourceChange({ proxyUrl, source }) {
+  updateExternalResource({ [proxyUrl]: source })
 }
 
 function addInterceptors(proxyServer) {
@@ -47,13 +62,20 @@ function addInterceptors(proxyServer) {
     webpackOutputPath,
     webpackMappings,
   } = getState()
+  externalMappings &&
+    require('../monitor')({ externalMappings, onExternalResourceChange })
+  externalMappings &&
+    require('./interceptors/external')({
+      externalMappings,
+      getExternalResource,
+      proxyServer,
+    })
   require('./interceptors/webpack')({
     logIntercept,
     proxyServer,
     webpackMappings,
     webpackOutputPath,
   })
-  require('./interceptors/external')({ externalMappings, proxyServer })
   require('./interceptors/local')({ localMappings, logIntercept, proxyServer })
   require('./interceptors/cli')({
     addInterceptorForBanner,
@@ -73,6 +95,12 @@ const proxyServer = hoxy
     addInterceptors(proxyServer)
     console.log(`🎭 ProxyPack started on localhost: ${port}`)
   })
+
+// for debugging hoxy
+// proxyServer.log('error warn debug', function(event) {
+//   console.error(event.level + ': ' + event.message);
+//   if (event.error) console.error(event.error.stack);
+// });
 
 module.exports = {
   updateWebpackOutputPath: function(_path) {
