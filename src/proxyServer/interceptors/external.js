@@ -1,6 +1,7 @@
 module.exports = function({
   externalMappings,
   getExternalResource,
+  logIntercept,
   proxyServer,
 }) {
   function addInterceptor(mapping) {
@@ -9,6 +10,13 @@ module.exports = function({
       const source = getExternalResource(proxyUrl)
       response.string = source
       response.statusCode = 200
+      logIntercept({
+        request,
+        response,
+        statusCode: 200,
+        targetUrl,
+        proxyUrl,
+      })
     }
     proxyServer.intercept(
       {

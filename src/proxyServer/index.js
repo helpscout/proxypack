@@ -68,6 +68,7 @@ function addInterceptors(proxyServer) {
     require('./interceptors/external')({
       externalMappings,
       getExternalResource,
+      logIntercept,
       proxyServer,
     })
   require('./interceptors/webpack')({
