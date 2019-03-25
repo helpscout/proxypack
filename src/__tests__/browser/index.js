@@ -81,11 +81,13 @@ describe('browser', () => {
   })
 
   it('should fail and log', () => {
-    const log = jest.spyOn(global.console, 'log').mockImplementation(() => {})
+    const logSpy = jest
+      .spyOn(global.console, 'log')
+      .mockImplementation(() => {})
     mockAdapter.onGet('http://localhost:7777/cli').reply()
     initBrowser({ browser: '', domain: '' }).then(() => {
-      expect(log).toHaveBeenCalledTimes(1)
-      expect(log).toHaveBeenCalledWith(
+      expect(logSpy).toHaveBeenCalledTimes(1)
+      expect(logSpy).toHaveBeenCalledWith(
         'ProxyPack failed to connect, is it running?',
       )
       expect(openBrowserSpy).toHaveBeenCalledTimes(0)

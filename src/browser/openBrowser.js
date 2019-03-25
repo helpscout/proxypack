@@ -3,9 +3,9 @@ const launcher = require('@james-proxy/james-browser-launcher')
 function openBrowser({ browser, domain }) {
   launcher(function(error, launch) {
     if (error) {
-      return console.error(error)
+      console.error(error)
+      return
     }
-
     launch(
       domain,
       {
@@ -18,14 +18,14 @@ function openBrowser({ browser, domain }) {
           '--ignore-certificate-errors',
         ],
       },
-      function(err, instance) {
+      function(error, instance) {
+        if (error) {
+          console.error(error)
+          return
+        }
         console.log(
           `🎭 ProxyPack instance started for ${domain} in ${browser}.`,
         )
-        if (err) {
-          return console.error(err)
-        }
-
         instance.process.unref()
         instance.process.stdin.unref()
         instance.process.stdout.unref()

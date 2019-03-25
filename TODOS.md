@@ -7,6 +7,7 @@ TODOS:
 - check exit process listeners, make sure they get cleaned up, that no node processes are left hanging
 - investigate if external mappings can use cycle instead of read
 - make all the returns 203
+- add valdation on webpackplugin init for browser and well formed urls
 
 TRIAGE:
 

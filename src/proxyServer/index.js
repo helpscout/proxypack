@@ -71,13 +71,19 @@ function addInterceptors(proxyServer) {
       logIntercept,
       proxyServer,
     })
-  require('./interceptors/webpack')({
-    logIntercept,
-    proxyServer,
-    webpackMappings,
-    webpackOutputPath,
-  })
-  require('./interceptors/local')({ localMappings, logIntercept, proxyServer })
+  webpackMappings &&
+    require('./interceptors/webpack')({
+      logIntercept,
+      proxyServer,
+      webpackMappings,
+      webpackOutputPath,
+    })
+  localMappings &&
+    require('./interceptors/local')({
+      localMappings,
+      logIntercept,
+      proxyServer,
+    })
   require('./interceptors/cli')({
     addInterceptorForBanner,
     logIntercept,
