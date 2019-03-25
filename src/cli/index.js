@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const program = require('safe-commander')
-const openBrowser = require('../browser')
+const initBrowser = require('../browser')
 
 program
   .version('0.1.0')
@@ -8,7 +8,7 @@ program
   .option('-d, --domain [value]', 'Domain to launch')
   .parse(process.argv)
 
-openBrowser({
+initBrowser({
   browser: program.optsObj.browser,
   domain: program.optsObj.domain,
 })

@@ -1,47 +1,9 @@
-const launcher = require('@james-proxy/james-browser-launcher')
 const axios = require('axios')
+const openBrowser = require('./openBrowser')
 
-function launchBrowser({ browser, domain }) {
-  launcher(function(err, launch) {
-    if (err) {
-      return console.error(err)
-    }
-    launch(
-      domain || info.domain,
-      {
-        proxy: 'localhost:7777',
-        browser: browser,
-        detached: true,
-        options: [
-          '--disable-web-security',
-          '--disable-extensions',
-          '--ignore-certificate-errors',
-        ],
-      },
-      function(err, instance) {
-        console.log(
-          `🎭 ProxyPack instance started for ${domain} in ${browser}.`,
-        )
-
-        if (err) {
-          return console.error(err)
-        }
-
-        instance.process.unref()
-        instance.process.stdin.unref()
-        instance.process.stdout.unref()
-        instance.process.stderr.unref()
-
-        instance.on('stop', function(code) {
-          console.log('Instance stopped with exit code:', code)
-        })
-      },
-    )
-  })
-}
-
-function openBrowser({ browser = '', domain = '' }) {
-  axios
+function initBrowser({ browser = '', domain = '' } = {}) {
+  // queries the running proxy pack instance
+  return axios
     .get('http://localhost:7777/cli', { headers: { domain } })
     .then(response => {
       const {
@@ -52,15 +14,11 @@ function openBrowser({ browser = '', domain = '' }) {
       const _browser = browser || browserFromServer || 'chrome'
       const _domain = domain || domainFromServer
       // TODO add validation as some options break ProxyPack
-      launchBrowser({ browser: _browser, domain: _domain })
+      openBrowser({ domain: _domain, browser: _browser })
     })
     .catch(error => {
-      if (error.code === 'ECONNREFUSED') {
-        console.log('ProxyPack failed to connect, is it running?')
-      } else {
-        console.log(error)
-      }
+      console.log('ProxyPack failed to connect, is it running?')
     })
 }
 
-module.exports = openBrowser
+module.exports = initBrowser

@@ -17,8 +17,8 @@ module.exports = function({
 
       if (request.url === '/cli') {
         console.log(`A ProxyPack browser connected.`)
-        response.statusCode = 200
         response.string = JSON.stringify(state)
+        response.statusCode = 200
         logIntercept({
           request,
           response,

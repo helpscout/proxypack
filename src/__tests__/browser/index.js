@@ -1,0 +1,94 @@
+const initBrowser = require('../../browser')
+const axios = require('axios')
+const MockAdapter = require('axios-mock-adapter')
+jest.mock('../../browser/openBrowser')
+let openBrowser = require('../../browser/openBrowser')
+let openBrowserSpy = jest.fn(() => {})
+openBrowser.mockImplementation(openBrowserSpy)
+
+const mockAdapter = new MockAdapter(axios)
+
+describe('browser', () => {
+  beforeEach(() => {
+    openBrowserSpy = jest.fn(() => {})
+    openBrowser.mockImplementation(openBrowserSpy)
+  })
+
+  afterEach(() => {
+    mockAdapter.reset()
+  })
+
+  it('should open a browser to steveaoki.com in Firefox', () => {
+    mockAdapter.onGet('http://localhost:7777/cli').reply(200, {
+      browser: 'firefox',
+      domain: 'http://www.steveaoki.com',
+    })
+    initBrowser({ browser: '', domain: '' }).then(() => {
+      expect(openBrowserSpy).toHaveBeenCalledTimes(1)
+      expect(openBrowserSpy).toHaveBeenCalledWith({
+        browser: 'firefox',
+        domain: 'http://www.steveaoki.com',
+      })
+    })
+  })
+
+  it('should open a browser to steveaoki.com in Safari', () => {
+    mockAdapter.onGet('http://localhost:7777/cli').reply(200, {})
+    initBrowser({ browser: 'safari', domain: 'http://www.steveaoki.com' }).then(
+      () => {
+        expect(openBrowserSpy).toHaveBeenCalledTimes(1)
+        expect(openBrowserSpy).toHaveBeenCalledWith({
+          browser: 'safari',
+          domain: 'http://www.steveaoki.com',
+        })
+      },
+    )
+  })
+
+  it('should open a browser to steveaoki.com in Safari', () => {
+    mockAdapter.onGet('http://localhost:7777/cli').reply(200, {})
+    initBrowser({ browser: '', domain: '' }).then(() => {
+      expect(openBrowserSpy).toHaveBeenCalledTimes(1)
+      expect(openBrowserSpy).toHaveBeenCalledWith({
+        browser: 'chrome',
+        domain: undefined,
+      })
+    })
+  })
+
+  it('should open a browser to steveaoki.com in Safari', () => {
+    mockAdapter.onGet('http://localhost:7777/cli').reply(200, {})
+    initBrowser().then(() => {
+      expect(openBrowserSpy).toHaveBeenCalledTimes(1)
+      expect(openBrowserSpy).toHaveBeenCalledWith({
+        browser: 'chrome',
+        domain: undefined,
+      })
+    })
+  })
+
+  it('should open a browser with no domain', () => {
+    mockAdapter.onGet('http://localhost:7777/cli').reply(200, {
+      domain: '',
+    })
+    initBrowser({ browser: '', domain: '' }).then(() => {
+      expect(openBrowserSpy).toHaveBeenCalledTimes(1)
+      expect(openBrowserSpy).toHaveBeenCalledWith({
+        browser: 'chrome',
+        domain: '',
+      })
+    })
+  })
+
+  it('should fail and log', () => {
+    const log = jest.spyOn(global.console, 'log').mockImplementation(() => {})
+    mockAdapter.onGet('http://localhost:7777/cli').reply()
+    initBrowser({ browser: '', domain: '' }).then(() => {
+      expect(log).toHaveBeenCalledTimes(1)
+      expect(log).toHaveBeenCalledWith(
+        'ProxyPack failed to connect, is it running?',
+      )
+      expect(openBrowserSpy).toHaveBeenCalledTimes(0)
+    })
+  })
+})
