@@ -1,4 +1,4 @@
-const initBrowser = require('../../browser')
+const browser = require('../../browser')
 const axios = require('axios')
 const MockAdapter = require('axios-mock-adapter')
 jest.mock('../../browser/openBrowser')
@@ -23,7 +23,7 @@ describe('browser', () => {
       browser: 'firefox',
       domain: 'http://www.steveaoki.com',
     })
-    initBrowser({ browser: '', domain: '' }).then(() => {
+    browser.initBrowser({ browser: '', domain: '' }).then(() => {
       expect(openBrowserSpy).toHaveBeenCalledTimes(1)
       expect(openBrowserSpy).toHaveBeenCalledWith({
         browser: 'firefox',
@@ -34,20 +34,20 @@ describe('browser', () => {
 
   it('should open a browser to steveaoki.com in Safari', () => {
     mockAdapter.onGet('http://localhost:7777/cli').reply(200, {})
-    initBrowser({ browser: 'safari', domain: 'http://www.steveaoki.com' }).then(
-      () => {
+    browser
+      .initBrowser({ browser: 'safari', domain: 'http://www.steveaoki.com' })
+      .then(() => {
         expect(openBrowserSpy).toHaveBeenCalledTimes(1)
         expect(openBrowserSpy).toHaveBeenCalledWith({
           browser: 'safari',
           domain: 'http://www.steveaoki.com',
         })
-      },
-    )
+      })
   })
 
   it('should open a browser to steveaoki.com in Safari', () => {
     mockAdapter.onGet('http://localhost:7777/cli').reply(200, {})
-    initBrowser({ browser: '', domain: '' }).then(() => {
+    browser.initBrowser({ browser: '', domain: '' }).then(() => {
       expect(openBrowserSpy).toHaveBeenCalledTimes(1)
       expect(openBrowserSpy).toHaveBeenCalledWith({
         browser: 'chrome',
@@ -58,7 +58,7 @@ describe('browser', () => {
 
   it('should open a browser to steveaoki.com in Safari', () => {
     mockAdapter.onGet('http://localhost:7777/cli').reply(200, {})
-    initBrowser().then(() => {
+    browser.initBrowser().then(() => {
       expect(openBrowserSpy).toHaveBeenCalledTimes(1)
       expect(openBrowserSpy).toHaveBeenCalledWith({
         browser: 'chrome',
@@ -71,7 +71,7 @@ describe('browser', () => {
     mockAdapter.onGet('http://localhost:7777/cli').reply(200, {
       domain: '',
     })
-    initBrowser({ browser: '', domain: '' }).then(() => {
+    browser.initBrowser({ browser: '', domain: '' }).then(() => {
       expect(openBrowserSpy).toHaveBeenCalledTimes(1)
       expect(openBrowserSpy).toHaveBeenCalledWith({
         browser: 'chrome',
@@ -85,7 +85,7 @@ describe('browser', () => {
       .spyOn(global.console, 'log')
       .mockImplementation(() => {})
     mockAdapter.onGet('http://localhost:7777/cli').reply()
-    initBrowser({ browser: '', domain: '' }).then(() => {
+    browser.initBrowser({ browser: '', domain: '' }).then(() => {
       expect(logSpy).toHaveBeenCalledTimes(1)
       expect(logSpy).toHaveBeenCalledWith(
         'ProxyPack failed to connect, is it running?',

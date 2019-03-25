@@ -21,4 +21,6 @@ function initBrowser({ browser = '', domain = '' } = {}) {
     })
 }
 
-module.exports = initBrowser
+module.exports = {
+  initBrowser,
+}
