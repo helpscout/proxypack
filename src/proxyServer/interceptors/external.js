@@ -1,4 +1,4 @@
-module.exports = function({
+function init({
   externalMappings,
   getExternalResource,
   logIntercept,
@@ -30,4 +30,8 @@ module.exports = function({
     )
   }
   externalMappings && Object.entries(externalMappings).forEach(addInterceptor)
+}
+
+module.exports = {
+  init,
 }

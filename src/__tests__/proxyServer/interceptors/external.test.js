@@ -22,7 +22,7 @@ describe('externalInterceptor', () => {
   })
 
   it('expect intercept to call with correct data', () => {
-    externalInterceptor({
+    externalInterceptor.init({
       externalMappings,
       getExternalResource,
       logIntercept: logInterceptSpy,
@@ -48,7 +48,7 @@ describe('externalInterceptor', () => {
     const response = {
       headers: {},
     }
-    externalInterceptor({
+    externalInterceptor.init({
       externalMappings,
       getExternalResource,
       logIntercept: logInterceptSpy,

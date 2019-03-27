@@ -15,7 +15,7 @@ describe('localInterceptor', () => {
   })
 
   it('expect intercept to call with correct number of mappings', () => {
-    localInterceptor({
+    localInterceptor.init({
       localMappings,
       logIntercept: logInterceptSpy,
       proxyServer,
@@ -42,7 +42,7 @@ describe('localInterceptor', () => {
   })
 
   it('should call logIntercept', () => {
-    localInterceptor({
+    localInterceptor.init({
       localMappings,
       logIntercept: logInterceptSpy,
       proxyServer,

@@ -31,7 +31,7 @@ const _wm = {
 
 describe('monitor', () => {
   it('should call onExternalResourceChange', () => {
-    webMonitor({
+    webMonitor.init({
       externalMappings,
       onExternalResourceChange: onExternalResourceChangeSpy,
       _wm,
@@ -42,7 +42,7 @@ describe('monitor', () => {
   })
   it('should call console.log', () => {
     const log = jest.spyOn(global.console, 'log').mockImplementation(() => {})
-    webMonitor({
+    webMonitor.init({
       externalMappings,
       onExternalResourceChange: onExternalResourceChangeSpy,
       _wm,

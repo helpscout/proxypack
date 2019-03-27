@@ -6,11 +6,7 @@ const options = {
   lapse: 5000,
 }
 
-module.exports = function({
-  externalMappings,
-  onExternalResourceChange,
-  _wm = wm,
-}) {
+function init({ externalMappings, onExternalResourceChange, _wm = wm }) {
   function addMonitor(proxyUrl) {
     _wm
       .monitor(proxyUrl, options)
@@ -23,4 +19,8 @@ module.exports = function({
       )
   }
   Object.values(externalMappings).forEach(addMonitor)
+}
+
+module.exports = {
+  init,
 }

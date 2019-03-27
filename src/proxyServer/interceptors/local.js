@@ -1,4 +1,4 @@
-module.exports = function({ localMappings, logIntercept, proxyServer }) {
+function init({ localMappings, logIntercept, proxyServer }) {
   function addInterceptor(mapping) {
     const [targetUrl, localLocation] = mapping
 
@@ -23,4 +23,8 @@ module.exports = function({ localMappings, logIntercept, proxyServer }) {
     )
   }
   localMappings && Object.entries(localMappings).forEach(addInterceptor)
+}
+
+module.exports = {
+  init,
 }

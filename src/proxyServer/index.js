@@ -1,105 +1,62 @@
 const hoxy = require('hoxy')
-const fs = require('fs')
-const path = require('path')
+const bannerInterceptor = require('./interceptors/banner')
+const cliInterceptor = require('./interceptors/cli')
+const externalInterceptor = require('./interceptors/external')
+const localInterceptor = require('./interceptors/local')
+const webpackInterceptor = require('./interceptors/webpack')
+const monitor = require('../monitor')
+const state = require('./state')
 
-let state = {
-  browser: 'chrome',
-  certAuthority: {
-    key: fs.readFileSync(
-      path.resolve(__dirname, '../assets/ssl/proxypack.key.pem'),
-    ),
-    cert: fs.readFileSync(
-      path.resolve(__dirname, '../assets/ssl/proxypack.crt.pem'),
-    ),
-  },
-  domain: '',
-  externalResources: {},
-  appUrls: {
-    cli: 'http://localhost:7777/cli',
-  },
-  intercepts: [],
-  isInit: false,
-  port: 7777,
-  webpackOutputPath: '',
+function addInterceptorForBanner({ proxyServer, domain }) {
+  bannerInterceptor.init({ proxyServer, domain })
 }
 
-function getState() {
-  return state
-}
-
-function setState(newState) {
-  state = { ...state, ...newState }
-}
-
-function getExternalResource(proxyUrl) {
-  return state.externalResources[proxyUrl]
-}
-
-function logIntercept(intercept) {
-  setState({ intercepts: [...state.intercepts, intercept] })
-}
-
-function updateExternalResource(externalResource) {
-  setState({
-    externalResources: { ...state.externalResources, ...externalResource },
-  })
-}
-
-function addInterceptorForBanner(domain) {
-  require('./interceptors/banner')({ proxyServer, domain })
-}
-
-function onExternalResourceChange({ proxyUrl, source }) {
-  updateExternalResource({ [proxyUrl]: source })
-}
-
-function addInterceptors(proxyServer) {
-  const {
-    appUrls,
-    domain,
-    externalMappings,
-    localMappings,
-    webpackOutputPath,
-    webpackMappings,
-  } = getState()
-  externalMappings &&
-    require('../monitor')({ externalMappings, onExternalResourceChange })
-  externalMappings &&
-    require('./interceptors/external')({
-      externalMappings,
-      getExternalResource,
-      logIntercept,
-      proxyServer,
-    })
-  webpackMappings &&
-    require('./interceptors/webpack')({
-      logIntercept,
-      proxyServer,
-      webpackMappings,
-      webpackOutputPath,
-    })
-  localMappings &&
-    require('./interceptors/local')({
-      localMappings,
-      logIntercept,
-      proxyServer,
-    })
-  require('./interceptors/cli')({
-    addInterceptorForBanner,
-    logIntercept,
-    getState,
-    proxyServer,
-    targetUrl: appUrls.cli,
-  })
-  addInterceptorForBanner(domain)
-}
-
-const port = getState().port
+const { certAuthority, port } = state.get()
 
 const proxyServer = hoxy
-  .createServer({ certAuthority: state.certAuthority })
+  .createServer({ certAuthority })
   .listen(port, status => {
-    addInterceptors(proxyServer)
+    const {
+      domain,
+      externalMappings,
+      localMappings,
+      webpackOutputPath,
+      webpackMappings,
+    } = state.get()
+    externalMappings &&
+      monitor.init({
+        externalMappings,
+        onExternalResourceChange: state.onExternalResourceChange,
+      })
+    externalMappings &&
+      externalInterceptor.init({
+        externalMappings,
+        getExternalResource: state.getExternalResource,
+        logIntercept: state.logIntercept,
+        proxyServer,
+      })
+    webpackMappings &&
+      webpackInterceptor.init({
+        logIntercept: state.logIntercept,
+        proxyServer,
+        webpackMappings,
+        webpackOutputPath,
+      })
+    localMappings &&
+      localInterceptor.init({
+        localMappings,
+        logIntercept: state.logIntercept,
+        proxyServer,
+      })
+    proxyServer &&
+      cliInterceptor.init({
+        addInterceptorForBanner,
+        logIntercept: state.logIntercept,
+        getState: state.get,
+        proxyServer,
+        targetUrl: state.get().appUrls.cli,
+      })
+    addInterceptorForBanner({ proxyServer, domain })
     console.log(`🎭 ProxyPack started on localhost: ${port}`)
   })
 
@@ -110,8 +67,8 @@ const proxyServer = hoxy
 // });
 
 module.exports = {
-  updateWebpackOutputPath: function(_path) {
-    setState({ webpackOutputPath: _path })
+  updateWebpackOutputPath(_path) {
+    state.set({ webpackOutputPath: _path })
   },
   init({
     browser = '',
@@ -120,9 +77,9 @@ module.exports = {
     localMappings = {},
     webpackMappings = [],
   }) {
-    const { isInit } = getState()
+    const { isInit } = state.get()
     if (!isInit) {
-      setState({
+      state.set({
         browser,
         domain,
         externalMappings,

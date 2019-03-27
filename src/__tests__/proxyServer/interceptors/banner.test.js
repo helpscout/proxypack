@@ -9,7 +9,7 @@ describe('webpackInterceptor', () => {
   })
 
   it('expect intercept to call with correct data', () => {
-    bannerInterceptor({
+    bannerInterceptor.init({
       domain,
       proxyServer,
     })
@@ -35,7 +35,7 @@ describe('webpackInterceptor', () => {
       })),
     }
 
-    bannerInterceptor({
+    bannerInterceptor.init({
       domain,
       proxyServer,
     })

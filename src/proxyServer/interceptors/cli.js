@@ -1,4 +1,4 @@
-module.exports = function({
+function init({
   addInterceptorForBanner,
   getState,
   logIntercept,
@@ -38,4 +38,8 @@ module.exports = function({
     )
   }
   addInterceptor(logIntercept)
+}
+
+module.exports = {
+  init,
 }

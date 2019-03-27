@@ -1,6 +1,6 @@
 const path = require('path')
 
-module.exports = function({
+function init({
   logIntercept,
   proxyServer,
   webpackMappings,
@@ -28,4 +28,8 @@ module.exports = function({
     )
   }
   webpackMappings && webpackMappings.forEach(addInterceptor)
+}
+
+module.exports = {
+  init,
 }

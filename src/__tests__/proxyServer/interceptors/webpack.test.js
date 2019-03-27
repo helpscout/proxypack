@@ -20,7 +20,7 @@ describe('webpackInterceptor', () => {
   })
 
   it('expect intercept to call with correct data', () => {
-    webpackInterceptor({
+    webpackInterceptor.init({
       logIntercept: logInterceptSpy,
       proxyServer,
       webpackMappings,
@@ -49,7 +49,7 @@ describe('webpackInterceptor', () => {
   })
 
   it('should call logIntercept and cycle', () => {
-    webpackInterceptor({
+    webpackInterceptor.init({
       logIntercept: logInterceptSpy,
       proxyServer,
       webpackMappings,

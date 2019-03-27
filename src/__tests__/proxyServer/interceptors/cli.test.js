@@ -1,25 +1,25 @@
-const cliInterceptor = require('../../../proxyServer/interceptors/cli.js')
 const proxyServer = require('../../../__mocks__/proxyServer')
+const cliInterceptor = require('../../../proxyServer/interceptors/cli.js')
 
 describe('cliInterceptor', () => {
   const addInterceptorForBannerSpy = jest.fn()
   const port = 8888
   const domain = 'secure.helpscout.net'
-  const getStateSpy = jest.fn().mockReturnValue({
+  const getSpy = jest.fn().mockReturnValue({
     domain,
     port,
   })
+  const logInterceptSpy = jest.fn()
   const targetUrl = 'localhost:8888/cli'
 
-  const logInterceptSpy = jest.fn()
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
   it('expect intercept to call with correct data', () => {
-    cliInterceptor({
+    cliInterceptor.init({
       addInterceptorForBanner: addInterceptorForBannerSpy,
-      getState: getStateSpy,
+      getState: getSpy,
       logIntercept: logInterceptSpy,
       proxyServer: proxyServer,
       targetUrl,
@@ -45,9 +45,9 @@ describe('cliInterceptor', () => {
     const response = {
       headers: {},
     }
-    cliInterceptor({
+    cliInterceptor.init({
       addInterceptorForBanner: addInterceptorForBannerSpy,
-      getState: getStateSpy,
+      getState: getSpy,
       logIntercept: logInterceptSpy,
       proxyServer: proxyServer,
       targetUrl,
@@ -64,9 +64,9 @@ describe('cliInterceptor', () => {
     const response = {
       headers: {},
     }
-    cliInterceptor({
+    cliInterceptor.init({
       addInterceptorForBanner: addInterceptorForBannerSpy,
-      getState: getStateSpy,
+      getState: getSpy,
       logIntercept: logInterceptSpy,
       proxyServer: proxyServer,
     })
@@ -82,9 +82,9 @@ describe('cliInterceptor', () => {
     const response = {
       headers: {},
     }
-    cliInterceptor({
+    cliInterceptor.init({
       addInterceptorForBanner: addInterceptorForBannerSpy,
-      getState: getStateSpy,
+      getState: getSpy,
       logIntercept: logInterceptSpy,
       proxyServer: proxyServer,
     })
@@ -106,9 +106,9 @@ describe('cliInterceptor', () => {
     const response = {
       headers: {},
     }
-    cliInterceptor({
+    cliInterceptor.init({
       addInterceptorForBanner: addInterceptorForBannerSpy,
-      getState: getStateSpy,
+      getState: getSpy,
       logIntercept: logInterceptSpy,
       proxyServer: proxyServer,
     })
