@@ -6,6 +6,7 @@ module.exports = function({
 }) {
   function addInterceptor(mapping) {
     const [targetUrl, proxyUrl] = mapping
+
     function handleInterceptor(request, response) {
       const source = getExternalResource(proxyUrl)
       response.string = source
