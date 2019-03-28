@@ -2,6 +2,9 @@ const fs = require('fs')
 const path = require('path')
 
 let state = {
+  appUrls: {
+    cli: 'http://localhost:7777/cli',
+  },
   browser: 'chrome',
   certAuthority: {
     key: fs.readFileSync(
@@ -13,9 +16,6 @@ let state = {
   },
   domain: '',
   externalResources: {},
-  appUrls: {
-    cli: 'http://localhost:7777/cli',
-  },
   intercepts: [],
   isInit: false,
   port: 7777,
@@ -35,7 +35,9 @@ function getExternalResource(proxyUrl) {
 }
 
 function logIntercept(intercept) {
-  set({ intercepts: [...state.intercepts, intercept] })
+  set({
+    intercepts: [...state.intercepts, intercept],
+  })
 }
 
 function updateExternalResource(externalResource) {

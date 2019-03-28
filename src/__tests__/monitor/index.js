@@ -7,7 +7,7 @@ const externalMappings = {
 
 const proxyUrl = Object.values(externalMappings)[0]
 const source = 'some source code'
-const onExternalResourceChangeSpy = jest.fn()
+const updateExternalResourceSpy = jest.fn()
 
 const _wm = {
   monitor: function() {
@@ -30,21 +30,21 @@ const _wm = {
 }
 
 describe('monitor', () => {
-  it('should call onExternalResourceChange', () => {
+  it('should call updateExternalResource', () => {
     webMonitor.init({
       externalMappings,
-      onExternalResourceChange: onExternalResourceChangeSpy,
+      updateExternalResource: updateExternalResourceSpy,
       _wm,
     })
     _wm.simulate('alert', proxyUrl, source)
-    expect(onExternalResourceChangeSpy).toBeCalledTimes(1)
-    expect(onExternalResourceChangeSpy).toBeCalledWith({ proxyUrl, source })
+    expect(updateExternalResourceSpy).toBeCalledTimes(1)
+    expect(updateExternalResourceSpy).toBeCalledWith({ [proxyUrl]: source })
   })
   it('should call console.log', () => {
     const log = jest.spyOn(global.console, 'log').mockImplementation(() => {})
     webMonitor.init({
       externalMappings,
-      onExternalResourceChange: onExternalResourceChangeSpy,
+      updateExternalResource: updateExternalResourceSpy,
       _wm,
     })
     _wm.simulate('error', proxyUrl, source)

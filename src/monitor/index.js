@@ -6,13 +6,13 @@ const options = {
   lapse: 5000,
 }
 
-function init({ externalMappings, onExternalResourceChange, _wm = wm }) {
+function init({ externalMappings, updateExternalResource, _wm = wm }) {
   function addMonitor(proxyUrl) {
     _wm
       .monitor(proxyUrl, options)
       .start()
       .on('alert', (url, source) => {
-        onExternalResourceChange({ proxyUrl: url, source })
+        updateExternalResource({ [url]: source })
       })
       .on('error', error =>
         console.log('Web monitor failed to monitor an externalMapping', error),

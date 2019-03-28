@@ -1,6 +1,5 @@
-const fs = require('fs')
-const path = require('path')
 const browser = 'firefox'
+const state = require('../../proxyServer/state')
 const domain = 'https://secure.helpscout.net'
 const webpackMappings = [
   'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist/*',
@@ -85,19 +84,19 @@ describe('proxyServer', () => {
 
     // next tick, something in hoxy doesnt' resolve completely in jest test
     setTimeout(() => {
-      // expect(bannerInterceptor.init).toHaveBeenCalledTimes(1)
-      // expect(bannerInterceptor.init).toHaveBeenCalledWith({
-      //     domain,
-      //     proxyServer: expect.any(Object),
-      // })
-      // expect(cliInterceptor.init).toHaveBeenCalledTimes(1)
-      // expect(cliInterceptor.init).toHaveBeenCalledWith({
-      //     addInterceptForBanner: expect.any(Function),
-      //     logIntercept: expect.any(Function),
-      //     getState: expect.any(Object),
-      //     proxyServer: expect.any(Object),
-      //     targetUrls:  expect.any(Object)
-      // })
+      expect(bannerInterceptor.init).toHaveBeenCalledTimes(1)
+      expect(bannerInterceptor.init).toHaveBeenCalledWith({
+        domain,
+        proxyServer: expect.any(Object),
+      })
+      expect(cliInterceptor.init).toHaveBeenCalledTimes(1)
+      expect(cliInterceptor.init).toHaveBeenCalledWith({
+        addInterceptorForBanner: expect.any(Function),
+        logIntercept: state.logIntercept,
+        getState: state.get,
+        proxyServer: expect.any(Object),
+        targetUrl: state.get().appUrls.cli,
+      })
       expect(externalInterceptor.init).toHaveBeenCalledTimes(1)
       expect(externalInterceptor.init).toHaveBeenCalledWith({
         externalMappings,

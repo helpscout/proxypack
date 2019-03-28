@@ -26,7 +26,7 @@ const proxyServer = hoxy
     externalMappings &&
       monitor.init({
         externalMappings,
-        onExternalResourceChange: state.onExternalResourceChange,
+        updateExternalResource: state.updateExternalResource,
       })
     externalMappings &&
       externalInterceptor.init({
