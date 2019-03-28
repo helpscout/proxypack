@@ -34,6 +34,7 @@
     "@helpscout/zero": "^3.0.2",
     "axios-mock-adapter": "^1.16.0",
     "babel-core": "^7.0.0-bridge.0",
+    "jest": "^24.1.0",
     "nodemon": "^1.18.10"
   },
   "dependencies": {

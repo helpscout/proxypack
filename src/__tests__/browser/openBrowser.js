@@ -97,6 +97,7 @@ describe('openBrowser', () => {
     })
     simulateInstanceOnCallback.call()
     expect(instanceOnCallbackSpy).toHaveBeenCalledTimes(1)
+    instanceOnCallbackSpy()
     // expect(instanceOnCallbackSpy).toHaveBeenCalledWith(undefined)
     // expect(logSpy).toHaveBeenCalledWith('Instance stopped with exit code:', 666)
   })

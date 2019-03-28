@@ -1,6 +1,39 @@
-const browser = 'firefox'
+jest.mock('../../proxyServer/state', () => {
+  const fs = require('fs')
+  const path = require('path')
+
+  return {
+    state: {
+      appUrls: {
+        cli: 'http://localhost:7777/cli',
+      },
+      browser: 'firefox',
+      certAuthority: {
+        key: fs.readFileSync(path.resolve('src/assets/ssl/proxypack.key.pem')),
+        cert: fs.readFileSync(path.resolve('src/assets/ssl/proxypack.crt.pem')),
+      },
+      domain: 'http://www.secure.helpscout.net',
+      externalResources: {},
+      intercepts: [],
+      isInit: false,
+      port: 7777,
+      webpackOutputPath: '/Users/tjbo/sites/hsapp/site/js/dist/',
+    },
+    get: function() {
+      return this.state
+    },
+    set: function(newState) {
+      this.state = { ...this.state, ...newState }
+    },
+    getExternalResource: jest.fn(),
+    logIntercept: jest.fn(),
+  }
+})
+
 const state = require('../../proxyServer/state')
-const domain = 'https://secure.helpscout.net'
+
+const webpackOutputPath = '/Users/tjbo/sites/hsapp/site/js/dist/'
+
 const webpackMappings = [
   'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist/*',
   'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist2/*',
@@ -15,21 +48,19 @@ const externalMappings = {
     'http://localhost:3001/static/js/main.2.1.js',
 }
 
-const webpackOutputPath = '/Users/tjbo/sites/hsapp/site/js/dist/'
-
 let proxyServer = require('../../proxyServer')
 
-// const _proxyServer = jest.mock('hoxy', () => {
-//     return {
-//         createServer: function () {
-//             return this
-//         },
-//         listen: function(port, callback) {
-//             callback(_proxyServer)
-//             return this
-//         }
-//     }
-// })
+const _proxyServer = jest.mock('hoxy', () => {
+  return {
+    createServer: function() {
+      return this
+    },
+    listen: function(port, callback) {
+      callback(_proxyServer)
+      return this
+    },
+  }
+})
 
 const bannerInterceptor = require('../../proxyServer/interceptors/banner')
 bannerInterceptor.init = jest.fn()
@@ -47,34 +78,42 @@ const webpackInterceptor = require('../../proxyServer/interceptors/webpack')
 webpackInterceptor.init = jest.fn()
 
 describe('proxyServer', () => {
-  afterEach(() => {
-    jest.restoreAllMocks()
+  beforeEach(() => {
+    jest.clearAllMocks()
+    state.set({ isInit: false })
+    jest.resetModules()
   })
 
-  // it('should init proxyServer', () => {
-  //     proxyServer.init({
-  //         browser,
-  //         domain,
-  //         webpackMappings,
-  //         localMappings,
-  //         externalMappings
-  //       })
-
-  //     const state = proxyServer.get()
-  //     expect(state.browser).toEqual(browser)
-  //     expect(state.domain).toEqual(domain)
-  // })
-
-  // it('should set a webpack path', () => {
-  //     proxyServer.updateWebpackOutputPath('/some/path')
-  //     const state = proxyServer.get()
-  //     expect(state.webpackOutputPath).toEqual('/some/path')
-  // })
-
-  it('should call a require', () => {
+  it('should init proxyServer', () => {
     proxyServer.init({
-      browser,
-      domain,
+      browser: 'chrome',
+      domain: 'http://www.helpscout.com',
+      webpackMappings,
+      localMappings,
+      externalMappings,
+    })
+    const expectedState = state.get()
+    expect(expectedState.browser).toEqual('chrome')
+    expect(expectedState.domain).toEqual('http://www.helpscout.com')
+  })
+
+  it('should set a webpack path', () => {
+    proxyServer.init({
+      browser: 'chrome',
+      domain: 'http://www.helpscout.com',
+      webpackMappings,
+      localMappings,
+      externalMappings,
+    })
+    proxyServer.updateWebpackOutputPath('/some/path')
+    const expectedState = state.get()
+    expect(expectedState.webpackOutputPath).toEqual('/some/path')
+  })
+
+  it('should add interceptors', done => {
+    proxyServer.init({
+      browser: 'chrome',
+      domain: 'http://www.helpscout.com',
       webpackMappings,
       localMappings,
       externalMappings,
@@ -82,11 +121,11 @@ describe('proxyServer', () => {
 
     proxyServer.updateWebpackOutputPath(webpackOutputPath)
 
-    // next tick, something in hoxy doesnt' resolve completely in jest test
+    //next tick, something in hoxy doesnt' resolve completely in jest test
     setTimeout(() => {
       expect(bannerInterceptor.init).toHaveBeenCalledTimes(1)
       expect(bannerInterceptor.init).toHaveBeenCalledWith({
-        domain,
+        domain: 'http://www.helpscout.com',
         proxyServer: expect.any(Object),
       })
       expect(cliInterceptor.init).toHaveBeenCalledTimes(1)
@@ -117,18 +156,47 @@ describe('proxyServer', () => {
         webpackMappings,
         webpackOutputPath,
       })
+      done()
     }, 0)
   })
 
-  it('get state should be accurate', () => {
-    // proxyServer.init({
-    //     browser,
-    //     domain,
-    //     localMappings,
-    //     externalMappings
-    // })
-    // setTimeout(() => {
-    //     expect(webpackInterceptor.init).toHaveBeenCalledTimes(0)
-    // }, 0)
+  it('get state should be accurate', done => {
+    proxyServer.init({
+      browser: 'chrome',
+      domain: 'http://www.helpscout.com',
+      localMappings: {},
+      externalMappings: {},
+      webpackMappings: [],
+    })
+    setTimeout(() => {
+      expect(webpackInterceptor.init).toHaveBeenCalledTimes(0)
+      expect(localInterceptor.init).toHaveBeenCalledTimes(0)
+      expect(externalInterceptor.init).toHaveBeenCalledTimes(0)
+      done()
+    }, 0)
+  })
+
+  it('should init correctly', done => {
+    proxyServer.init({})
+    setTimeout(() => {
+      const expectedState = state.get()
+      expect(expectedState.browser).toEqual('')
+      expect(expectedState.domain).toEqual('')
+      expect(expectedState.webpackMappings).toEqual([])
+      expect(expectedState.externalMappings).toEqual({})
+      expect(expectedState.localMappings).toEqual({})
+      done()
+    })
+  })
+
+  it('should init correctly', done => {
+    proxyServer.init({ browser: 'firefox' })
+    proxyServer.init({ browser: 'chrome' })
+
+    setTimeout(() => {
+      const expectedState = state.get()
+      expect(expectedState.browser).toEqual('firefox')
+      done()
+    })
   })
 })

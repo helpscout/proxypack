@@ -1,8 +1,5 @@
-const program = require('safe-commander')
-program.optsObj = {
-  browser: 'firefox',
-  domain: 'https://secure.helpscout.net',
-}
+process.argv.push('--browser', 'firefox')
+process.argv.push('--domain', 'https://secure.helpscout.net')
 
 const browser = require('../../browser')
 browser.initBrowser = jest.fn(() => {})
