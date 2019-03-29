@@ -44,6 +44,13 @@
     "safe-commander": "^2.11.2",
     "web-monitoring": "^2.1.0"
   },
+  "bundledDependencies": [
+    "@james-proxy/james-browser-launcher",
+    "axios",
+    "hoxy",
+    "safe-commander",
+    "web-monitoring"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/helpscout/proxypack.git"
