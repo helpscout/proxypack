@@ -6,6 +6,7 @@ function init({ domain, proxyServer }) {
   ]
   function addInterceptor(domain) {
     function handleInterceptor(request, response, cycle) {
+      response.headers['proxypack-type'] = 'banner'
       response.$('body').prepend(banner.join(' '))
     }
 

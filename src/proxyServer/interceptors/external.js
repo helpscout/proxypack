@@ -8,16 +8,21 @@ function init({
     const [targetUrl, proxyUrl] = mapping
 
     function handleInterceptor(request, response) {
-      const source = getExternalResource(proxyUrl)
-      response.string = source
-      response.statusCode = 203
-      logIntercept({
-        request,
-        response,
-        targetUrl,
-        proxyUrl,
-        type: 'external',
-      })
+      try {
+        const source = getExternalResource(proxyUrl)
+        response.string = source
+        response.statusCode = 203
+        response.headers['proxypack-type'] = 'external'
+        logIntercept({
+          request,
+          response,
+          targetUrl,
+          proxyUrl,
+          type: 'external',
+        })
+      } catch (error) {
+        console.error('Failed to serve an external resource.', error)
+      }
     }
     proxyServer.intercept(
       {

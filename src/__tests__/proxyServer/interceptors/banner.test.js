@@ -30,6 +30,9 @@ describe('webpackInterceptor', () => {
     const request = {}
 
     const response = {
+      headers: {
+        'proxypack-type': 'banner',
+      },
       $: jest.fn(() => ({
         prepend: prependSpy,
       })),

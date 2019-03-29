@@ -18,6 +18,7 @@ function init({
         if (webpackFile) {
           response.statusCode = 203
           response.string = webpackFile
+          response.headers['proxypack-type'] = 'webpack'
           logIntercept({
             response,
             request,

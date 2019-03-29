@@ -50,13 +50,16 @@ describe('localInterceptor', () => {
       proxyServer,
     })
     fs.readFileSync.mockReturnValue('source code')
-    proxyServer.simulate({}, {}, () => {}, targetUrl2)
+    proxyServer.simulate({}, { headers: {} }, () => {}, targetUrl2)
     expect(fs.readFileSync).toHaveBeenCalledTimes(1)
     expect(fs.readFileSync).toHaveBeenCalledWith(localLocation2, 'utf8')
     expect(logInterceptSpy).toHaveBeenCalledTimes(1)
     expect(logInterceptSpy).toHaveBeenCalledWith({
       request: {},
       response: {
+        headers: {
+          'proxypack-type': 'local',
+        },
         statusCode: 203,
         string: 'source code',
       },

@@ -9,6 +9,7 @@ function init({ localMappings, logIntercept, proxyServer }) {
         const file = fs.readFileSync(localLocation, 'utf8')
         response.statusCode = 203
         response.string = file
+        response.headers['proxypack-type'] = 'local'
         logIntercept({
           response,
           request,

@@ -60,7 +60,7 @@ describe('webpackInterceptor', () => {
       url:
         'https://dhmmnd775wlnp.cloudfront.net/dddfff333/js/apps/dist/dashboard.js',
     }
-    proxyServer.simulate(request, {}, {}, targetUrl1)
+    proxyServer.simulate(request, { headers: {} }, {}, targetUrl1)
     expect(fs.readFileSync).toHaveBeenCalledTimes(1)
     expect(fs.readFileSync).toHaveBeenCalledWith(
       '/User/tjbo/projects/hsApp/dashboard.js',
@@ -70,6 +70,9 @@ describe('webpackInterceptor', () => {
     expect(logInterceptSpy).toHaveBeenCalledWith({
       request,
       response: {
+        headers: {
+          'proxypack-type': 'webpack',
+        },
         statusCode: 203,
         string: 'source code',
       },

@@ -19,6 +19,7 @@ function init({
         console.log(`A ProxyPack browser connected.`)
         response.string = JSON.stringify(state)
         response.statusCode = 200
+        response.headers['proxypack-type'] = 'cli'
         logIntercept({
           request,
           response,
