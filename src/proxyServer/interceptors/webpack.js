@@ -1,4 +1,5 @@
 const path = require('path')
+const fs = require('fs')
 
 function init({
   logIntercept,
@@ -7,14 +8,26 @@ function init({
   webpackOutputPath,
 }) {
   function addInterceptor(targetUrl) {
-    function handleInterceptor(request, response, cycle) {
-      const filename = path.parse(request.url).base
-      logIntercept({
-        response,
-        request,
-        targetUrl: targetUrl,
-      })
-      return cycle.serve(webpackOutputPath + filename)
+    function handleInterceptor(request, response) {
+      try {
+        const filename = path.parse(request.url).base
+        const webpackFile = fs.readFileSync(
+          webpackOutputPath + filename,
+          'utf8',
+        )
+        if (webpackFile) {
+          response.statusCode = 203
+          response.string = webpackFile
+          logIntercept({
+            response,
+            request,
+            targetUrl: targetUrl,
+            type: 'webpack',
+          })
+        }
+      } catch (error) {
+        console.error('There was an error serving a webpack file.', error)
+      }
     }
 
     proxyServer.intercept(

@@ -1,7 +1,6 @@
 jest.mock('../../proxyServer/state', () => {
   const fs = require('fs')
   const path = require('path')
-
   return {
     state: {
       appUrls: {
@@ -31,7 +30,6 @@ jest.mock('../../proxyServer/state', () => {
 })
 
 const state = require('../../proxyServer/state')
-
 const webpackOutputPath = '/Users/tjbo/sites/hsapp/site/js/dist/'
 
 const webpackMappings = [

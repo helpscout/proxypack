@@ -1,14 +1,14 @@
 const webpackInterceptor = require('../../../proxyServer/interceptors/webpack.js')
 const proxyServer = require('../../../__mocks__/proxyServer')
+jest.mock('fs')
+const fs = require('fs')
+const errorSpy = jest.spyOn(global.console, 'error')
 
 describe('webpackInterceptor', () => {
   const webpackMappings = [
     'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist/*',
     'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist2/*',
   ]
-  const cycleSpy = {
-    serve: jest.fn(),
-  }
 
   const logInterceptSpy = jest.fn()
   const targetUrl1 = webpackMappings[0]
@@ -48,28 +48,45 @@ describe('webpackInterceptor', () => {
     )
   })
 
-  it('should call logIntercept and cycle', () => {
+  it('should call logIntercept and set a response', () => {
     webpackInterceptor.init({
       logIntercept: logInterceptSpy,
       proxyServer,
       webpackMappings,
       webpackOutputPath,
     })
+    fs.readFileSync.mockReturnValue('source code')
     const request = {
       url:
         'https://dhmmnd775wlnp.cloudfront.net/dddfff333/js/apps/dist/dashboard.js',
     }
-    const response = {}
-    proxyServer.simulate(request, response, cycleSpy, targetUrl1)
+    proxyServer.simulate(request, {}, {}, targetUrl1)
+    expect(fs.readFileSync).toHaveBeenCalledTimes(1)
+    expect(fs.readFileSync).toHaveBeenCalledWith(
+      '/User/tjbo/projects/hsApp/dashboard.js',
+      'utf8',
+    )
     expect(logInterceptSpy).toHaveBeenCalledTimes(1)
     expect(logInterceptSpy).toHaveBeenCalledWith({
       request,
-      response,
+      response: {
+        statusCode: 203,
+        string: 'source code',
+      },
       targetUrl: targetUrl1,
+      type: 'webpack',
     })
-    expect(cycleSpy.serve).toHaveBeenCalledTimes(1)
-    expect(cycleSpy.serve).toHaveBeenCalledWith(
-      '/User/tjbo/projects/hsApp/dashboard.js',
-    )
+  })
+
+  it('should throw a console.error', () => {
+    webpackInterceptor.init({
+      logIntercept: logInterceptSpy,
+      proxyServer,
+      webpackMappings,
+      webpackOutputPath,
+    })
+    proxyServer.simulate({}, {}, {}, targetUrl1)
+    fs.readFileSync.mockReturnValue(null, 'utf8')
+    expect(errorSpy).toHaveBeenCalledTimes(1)
   })
 })

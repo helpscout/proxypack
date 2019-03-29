@@ -10,13 +10,13 @@ function init({
     function handleInterceptor(request, response) {
       const source = getExternalResource(proxyUrl)
       response.string = source
-      response.statusCode = 200
+      response.statusCode = 203
       logIntercept({
         request,
         response,
-        statusCode: 200,
         targetUrl,
         proxyUrl,
+        type: 'external',
       })
     }
     proxyServer.intercept(

@@ -1,15 +1,24 @@
+const fs = require('fs')
+
 function init({ localMappings, logIntercept, proxyServer }) {
   function addInterceptor(mapping) {
     const [targetUrl, localLocation] = mapping
 
     function handleInterceptor(request, response, cycle) {
-      logIntercept({
-        response,
-        request,
-        proxyUrl: localLocation,
-        targetUrl,
-      })
-      return cycle.serve(localLocation)
+      try {
+        const file = fs.readFileSync(localLocation, 'utf8')
+        response.statusCode = 203
+        response.string = file
+        logIntercept({
+          response,
+          request,
+          proxyUrl: localLocation,
+          targetUrl,
+          type: 'local',
+        })
+      } catch (error) {
+        console.log('There was an error fetching a local file.', error)
+      }
     }
 
     proxyServer.intercept(

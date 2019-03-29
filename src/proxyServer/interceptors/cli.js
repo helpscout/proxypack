@@ -22,8 +22,8 @@ function init({
         logIntercept({
           request,
           response,
-          statusCode: 200,
           targetUrl,
+          type: 'cli',
         })
       }
     }

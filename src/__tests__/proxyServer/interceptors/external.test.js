@@ -59,9 +59,9 @@ describe('externalInterceptor', () => {
     expect(logInterceptSpy).toHaveBeenCalledWith({
       request,
       response,
-      statusCode: 200,
       targetUrl,
       proxyUrl,
+      type: 'external',
     })
   })
 })

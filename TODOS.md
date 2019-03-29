@@ -6,13 +6,12 @@ TODOS:
 - add logging
 - check exit process listeners, make sure they get cleaned up, that no node processes are left hanging
 - investigate if external mappings can use cycle instead of read
-- make all the returns 203
+
 - add valdation on webpackplugin init for browser and well formed urls
 
 TRIAGE:
 
 - add refresh
-- add webpack building thing to banner
 - add hot module loading
 - add passing of mappings from CLI
 - automatic cache invalidation for all mappings (right now you need to have the console open, check if there is a flag I can pass to the browser to auto invalidate the cache)

@@ -1,5 +1,7 @@
 const localInterceptor = require('../../../proxyServer/interceptors/local.js')
 const proxyServer = require('../../../__mocks__/proxyServer')
+jest.mock('fs')
+const fs = require('fs')
 
 describe('localInterceptor', () => {
   const localMappings = {
@@ -47,16 +49,20 @@ describe('localInterceptor', () => {
       logIntercept: logInterceptSpy,
       proxyServer,
     })
-    const cycle = {
-      serve: jest.fn(),
-    }
-    proxyServer.simulate({}, {}, cycle, targetUrl1)
+    fs.readFileSync.mockReturnValue('source code')
+    proxyServer.simulate({}, {}, () => {}, targetUrl2)
+    expect(fs.readFileSync).toHaveBeenCalledTimes(1)
+    expect(fs.readFileSync).toHaveBeenCalledWith(localLocation2, 'utf8')
     expect(logInterceptSpy).toHaveBeenCalledTimes(1)
     expect(logInterceptSpy).toHaveBeenCalledWith({
       request: {},
-      response: {},
-      targetUrl: targetUrl1,
-      proxyUrl: localLocation1,
+      response: {
+        statusCode: 203,
+        string: 'source code',
+      },
+      targetUrl: targetUrl2,
+      type: 'local',
+      proxyUrl: localLocation2,
     })
   })
 })

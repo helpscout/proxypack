@@ -93,8 +93,8 @@ describe('cliInterceptor', () => {
     expect(logInterceptSpy).toHaveBeenCalledWith({
       request,
       response,
-      statusCode: 200,
       targetUrl,
+      type: 'cli',
     })
   })
 
