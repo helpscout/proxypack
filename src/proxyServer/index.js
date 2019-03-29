@@ -61,10 +61,10 @@ const proxyServer = hoxy
   })
 
 // for debugging hoxy
-// proxyServer.log('error warn debug', function(event) {
-//   console.error(event.level + ': ' + event.message);
-//   if (event.error) console.error(event.error.stack);
-// });
+proxyServer.log('error', function(event) {
+  console.error(event.level + ': ' + event.message)
+  if (event.error) console.error(event.error.stack)
+})
 
 module.exports = {
   updateWebpackOutputPath(_path) {
