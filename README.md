@@ -53,7 +53,7 @@ new ProxyPackPlugin({
 
 ## Webpack Mappings
 
-`mappings` takes a array of mappings you wish to map to WebPack. In the above example anything sitting on the Cloudfront Server at `'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist/*'` will be mapped (via Proxy) to the Webpack build when running ProxyPack.
+`webpackMappings` takes a array of mappings you wish to map to WebPack. In the above example anything sitting on the Cloudfront Server at `'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist/*'` will be mapped (via Proxy) to the Webpack build when running ProxyPack.
 
 For example a file sitting at `https://dhmmnd775wlnp.cloudfront.net/777dddkkh/js/apps/dist/dashboard.js`, will resolve to the dist folder of your webpack targeting the file `dashboard.js`.
 
@@ -105,7 +105,7 @@ For example the command `proxypack` will open a Proxied Web Browser in `chrome`.
 
 You can pass the `browser` and / or `domain` flag, to target specific builds and override the values in `ProxyPackPlugin` config.
 
-For example: `proxypack --domain=https://secure.helpscout.net --browser=firefox`. Will open `https://secure.helpscout.net` in `Firefox` and Proxy all the assets you've told Webpack about in `mappings` and `externalMappings`.
+For example: `proxypack --domain=https://secure.helpscout.net --browser=firefox`. Will open `https://secure.helpscout.net` in `Firefox` and Proxy all the assets you've told Webpack about in `webpackMappings` and `externalMappings`.
 
 ### Standalone Method
 

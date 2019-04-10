@@ -1,29 +1,38 @@
-function init({
-  externalMappings,
-  getExternalResource,
-  logIntercept,
-  proxyServer,
-}) {
+const path = require('path')
+const axios = require('axios')
+
+function init({ externalMappings, proxyServer }) {
   function addInterceptor(mapping) {
-    const [targetUrl, proxyUrl] = mapping
+    const [targetUrl, proxyPath] = mapping
 
     function handleInterceptor(request, response) {
-      try {
-        const source = getExternalResource(proxyUrl)
-        response.string = source
-        response.statusCode = 203
-        response.headers['proxypack-type'] = 'external'
-        logIntercept({
-          request,
-          response,
-          targetUrl,
-          proxyUrl,
-          type: 'external',
-        })
-      } catch (error) {
-        console.error('Failed to serve an external resource.', error)
-      }
+      return new Promise((resolve, reject) => {
+        const filename = path.parse(request.url).base
+        const filepath = proxyPath + filename
+        return axios
+          .get(filepath, { responseType: 'text' })
+          .then(function(_response) {
+            console.log('################ response')
+            response.statusCode = 203
+            response.string = _response.data
+            response.headers['proxypack-type'] = 'external'
+            response.headers['proxypack-url'] = filepath
+            logIntercept({
+              response,
+              request,
+              proxyUrl: proxyPath,
+              targetUrl,
+              type: 'external',
+            })
+            resolve()
+          })
+          .catch(function(error) {
+            console.log(error)
+            reject()
+          })
+      })
     }
+
     proxyServer.intercept(
       {
         phase: 'request',

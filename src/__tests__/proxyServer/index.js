@@ -137,7 +137,6 @@ describe('proxyServer', () => {
       expect(externalInterceptor.init).toHaveBeenCalledTimes(1)
       expect(externalInterceptor.init).toHaveBeenCalledWith({
         externalMappings,
-        getExternalResource: expect.any(Function),
         logIntercept: expect.any(Function),
         proxyServer: expect.any(Object),
       })

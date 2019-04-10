@@ -4,7 +4,6 @@ const cliInterceptor = require('./interceptors/cli')
 const externalInterceptor = require('./interceptors/external')
 const localInterceptor = require('./interceptors/local')
 const webpackInterceptor = require('./interceptors/webpack')
-const monitor = require('../monitor')
 const state = require('./state')
 
 function addInterceptorForBanner({ proxyServer, domain }) {
@@ -23,18 +22,11 @@ const proxyServer = hoxy
       webpackOutputPath,
       webpackMappings,
     } = state.get()
-    externalMappings &&
-      monitor.init({
-        externalMappings,
-        updateExternalResource: state.updateExternalResource,
-      })
-    externalMappings &&
-      externalInterceptor.init({
-        externalMappings,
-        getExternalResource: state.getExternalResource,
-        logIntercept: state.logIntercept,
-        proxyServer,
-      })
+    externalInterceptor.init({
+      externalMappings,
+      logIntercept: state.logIntercept,
+      proxyServer,
+    })
     webpackMappings &&
       webpackInterceptor.init({
         logIntercept: state.logIntercept,
