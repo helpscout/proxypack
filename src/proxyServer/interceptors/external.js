@@ -12,7 +12,6 @@ function init({ externalMappings, proxyServer }) {
         return axios
           .get(filepath, { responseType: 'text' })
           .then(function(_response) {
-            console.log('################ response')
             response.statusCode = 203
             response.string = _response.data
             response.headers['proxypack-type'] = 'external'

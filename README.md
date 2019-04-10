@@ -31,8 +31,8 @@
 | browser          | String | chrome, chromium, firefox, ie, opera, safari, phantomjs |
 | domain           | String | WebSite URL                                             |
 | localMappings    | Dict   | Mappings of files on the local file system              |
-| mappings         | Array  | Production Asset Folder                                 |
 | externalMappings | Dict   | Production Assets / Folders                             |
+| webpackMappings  | Array  | Production Asset Folder                                 |
 
 ## Webpack Setup
 
