@@ -1,5 +1,6 @@
 TODOS:
 
+- add hard refresh to openBrowser, either by Flag or some other method
 - add a filter to make sure that the request is from the domain that is declared (the target domain of the browser passed by either webpack or CLI)
 - add a how to or other explanation
 - add tests
@@ -11,7 +12,6 @@ TODOS:
 
 TRIAGE:
 
-- add refresh
 - add hot module loading
 - add passing of mappings from CLI
 - automatic cache invalidation for all mappings (right now you need to have the console open, check if there is a flag I can pass to the browser to auto invalidate the cache)
