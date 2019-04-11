@@ -34,6 +34,10 @@ function getExternalResource(proxyUrl) {
   return state.externalResources[proxyUrl]
 }
 
+function setExternalMappings(externalMappings) {
+  set({ externalMappings })
+}
+
 function logIntercept(intercept) {
   set({
     intercepts: [...state.intercepts, intercept],
@@ -51,5 +55,6 @@ module.exports = {
   get,
   logIntercept,
   set,
+  setExternalMappings,
   updateExternalResource,
 }

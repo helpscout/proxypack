@@ -3,6 +3,7 @@ const bannerInterceptor = require('./interceptors/banner')
 const cliInterceptor = require('./interceptors/cli')
 const externalInterceptor = require('./interceptors/external')
 const localInterceptor = require('./interceptors/local')
+const rpcServer = require('../rpcServer/index')
 const webpackInterceptor = require('./interceptors/webpack')
 const state = require('./state')
 
@@ -49,7 +50,7 @@ const proxyServer = hoxy
         targetUrl: state.get().appUrls.cli,
       })
     addInterceptorForBanner({ proxyServer, domain })
-    console.log(`🎭 ProxyPack started on localhost: ${port}`)
+    console.log(`🎭 ProxyPackInterceptorServer started on localhost:${port}`)
   })
 
 // for debugging hoxy
@@ -68,6 +69,7 @@ module.exports = {
     externalMappings = {},
     localMappings = {},
     webpackMappings = [],
+    withRpcServer = false,
   }) {
     const { isInit } = state.get()
     if (!isInit) {
@@ -79,6 +81,10 @@ module.exports = {
         localMappings,
         webpackMappings,
       })
+      withRpcServer &&
+        rpcServer.init({
+          onExternalMappingsChange: state.setExternalMappings,
+        })
     }
   },
 }

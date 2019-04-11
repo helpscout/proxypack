@@ -1,7 +1,6 @@
-const WebpackPlugin = require('./webpack/index')
-const Server = require('./proxyServer/index')
-
 module.exports = {
-  WebpackPlugin,
-  Server,
+  WebpackPlugin: require('./webpack/index'),
+  Server: function() {
+    return require('./proxyServer/index')
+  },
 }
