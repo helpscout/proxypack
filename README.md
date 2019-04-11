@@ -18,8 +18,6 @@
 - [Local Mappings](#local-mappings)
 - [Install SSL Certificate](#install-ssl-certificate)
 - [To View A Proxy Build](#to-view-a-proxy-build)
-  - [Launcher Method](#launcher-method)
-  - [Standalone Method](#standalone-method)
 - [Thanks](#thanks)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -38,13 +36,19 @@
 
 ### Example 1:
 
+Import the ProxyPackPlugin:
+
+```
+const ProxyPackPlugin = require('@helpscout/proxypack').WebpackPlugin
+```
+
 In Webpack config add the following:
 
 ```
 new ProxyPackPlugin({
         browser: 'chrome',
         domain: 'https://secure.helpscout.net',
-        mappings: [
+        webpackMappings: [
             'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist/*'
             ]
       })
@@ -95,8 +99,6 @@ To view a ProxyPack Build in a Web Browser you must also have a Spoofed SSL cert
 
 ## To View A Proxy Build
 
-### Launcher Method
-
 You will need to `npm install @helpscout/proxypack -g`.
 
 This will install CLI commands that can launch a Proxied Web Browser that is aware of the ProxyServer running via Webpack.
@@ -106,14 +108,6 @@ For example the command `proxypack` will open a Proxied Web Browser in `chrome`.
 You can pass the `browser` and / or `domain` flag, to target specific builds and override the values in `ProxyPackPlugin` config.
 
 For example: `proxypack --domain=https://secure.helpscout.net --browser=firefox`. Will open `https://secure.helpscout.net` in `Firefox` and Proxy all the assets you've told Webpack about in `webpackMappings` and `externalMappings`.
-
-### Standalone Method
-
-FireFox has a standalone Proxy that you can find in Preferences. It looks like this:
-
-![FireFox Proxy](docs/images/firefox-proxy.png)
-
-Just remember, that if you set this up as your proxy, and WebPack isn't connected, you won't be connected to the internet, since FireFox is connecting to the internet through the proxy.
 
 ## Thanks
 
