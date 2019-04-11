@@ -1,4 +1,0 @@
-diff a/src/index.js b/src/index.js	(rejected hunks)
-@@ -5 +5 @@ module.exports = {
--  }
-+  },
