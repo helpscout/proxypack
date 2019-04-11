@@ -1,8 +1,0 @@
-diff a/dev/rpcServer.js b/dev/rpcServer.js	(rejected hunks)
-@@ -4,3 +4,3 @@ rpcServer.init({
--    onExternalMappingsChange: function(externalMappings) {
--        console.log(externalMappings)
--    }
-+  onExternalMappingsChange: function(externalMappings) {
-+    console.log(externalMappings)
-+  },
