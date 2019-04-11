@@ -42,14 +42,12 @@
     "axios": "^0.18.0",
     "hoxy": "^3.3.1",
     "safe-commander": "^2.11.2",
-    "web-monitoring": "^2.1.0"
   },
   "bundledDependencies": [
     "@james-proxy/james-browser-launcher",
     "axios",
     "hoxy",
-    "safe-commander",
-    "web-monitoring"
+    "safe-commander"
   ],
   "repository": {
     "type": "git",
