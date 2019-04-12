@@ -14,9 +14,6 @@ let _state = {
   },
   domain: '',
   externalResources: {},
-  appUrls: {
-    cli: 'http://localhost:7777/cli',
-  },
   intercepts: [],
   isInit: false,
   port: 7777,

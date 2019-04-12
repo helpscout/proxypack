@@ -2,9 +2,6 @@ const fs = require('fs')
 const path = require('path')
 
 let state = {
-  appUrls: {
-    cli: 'http://localhost:7777/cli',
-  },
   browser: 'chrome',
   certAuthority: {
     key: fs.readFileSync(
