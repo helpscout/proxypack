@@ -30,6 +30,10 @@ function set(newState) {
   state = { ...state, ...newState }
 }
 
+function setOptions({ browser, domain }) {
+  set({ browser, domain })
+}
+
 function getExternalResource(proxyUrl) {
   return state.externalResources[proxyUrl]
 }
@@ -56,5 +60,6 @@ module.exports = {
   logIntercept,
   set,
   setExternalMappings,
+  setOptions,
   updateExternalResource,
 }

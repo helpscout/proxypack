@@ -3,9 +3,6 @@ jest.mock('../../proxyServer/state', () => {
   const path = require('path')
   return {
     state: {
-      appUrls: {
-        cli: 'http://localhost:7777/cli',
-      },
       browser: 'firefox',
       certAuthority: {
         key: fs.readFileSync(path.resolve('src/assets/ssl/proxypack.key.pem')),
@@ -62,9 +59,6 @@ const _proxyServer = jest.mock('hoxy', () => {
 
 const bannerInterceptor = require('../../proxyServer/interceptors/banner')
 bannerInterceptor.init = jest.fn()
-
-const cliInterceptor = require('../../proxyServer/interceptors/cli')
-cliInterceptor.init = jest.fn()
 
 const externalInterceptor = require('../../proxyServer/interceptors/external')
 externalInterceptor.init = jest.fn()
@@ -125,14 +119,6 @@ describe('proxyServer', () => {
       expect(bannerInterceptor.init).toHaveBeenCalledWith({
         domain: 'http://www.helpscout.com',
         proxyServer: expect.any(Object),
-      })
-      expect(cliInterceptor.init).toHaveBeenCalledTimes(1)
-      expect(cliInterceptor.init).toHaveBeenCalledWith({
-        addInterceptorForBanner: expect.any(Function),
-        logIntercept: state.logIntercept,
-        getState: state.get,
-        proxyServer: expect.any(Object),
-        targetUrl: state.get().appUrls.cli,
       })
       expect(externalInterceptor.init).toHaveBeenCalledTimes(1)
       expect(externalInterceptor.init).toHaveBeenCalledWith({

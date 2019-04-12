@@ -1,17 +1,34 @@
 const hoxy = require('hoxy')
 const bannerInterceptor = require('./interceptors/banner')
-const cliInterceptor = require('./interceptors/cli')
 const externalInterceptor = require('./interceptors/external')
 const localInterceptor = require('./interceptors/local')
 const rpcServer = require('../rpcServer/index')
 const webpackInterceptor = require('./interceptors/webpack')
 const state = require('./state')
+const { certAuthority, port } = state.get()
 
 function addInterceptorForBanner({ proxyServer, domain }) {
   bannerInterceptor.init({ proxyServer, domain })
 }
 
-const { certAuthority, port } = state.get()
+function setOptions({ browser, domain: _domain }) {
+  const { domain } = state.get()
+  if (domain !== _domain) {
+    state.setOptions({ browser, domain: _domain })
+    addInterceptorForBanner({ domain: _domain, proxyServer })
+  } else {
+    state.setOptions({ browser, domain })
+  }
+}
+
+function addExternalMappingsInterceptor(proxyServer) {
+  const { externalMappings } = state.get()
+  externalInterceptor.init({
+    externalMappings,
+    logIntercept: state.logIntercept,
+    proxyServer,
+  })
+}
 
 const proxyServer = hoxy
   .createServer({ certAuthority })
@@ -23,11 +40,7 @@ const proxyServer = hoxy
       webpackOutputPath,
       webpackMappings,
     } = state.get()
-    externalInterceptor.init({
-      externalMappings,
-      logIntercept: state.logIntercept,
-      proxyServer,
-    })
+    externalMappings && addExternalMappingsInterceptor(proxyServer)
     webpackMappings &&
       webpackInterceptor.init({
         logIntercept: state.logIntercept,
@@ -41,23 +54,15 @@ const proxyServer = hoxy
         logIntercept: state.logIntercept,
         proxyServer,
       })
-    proxyServer &&
-      cliInterceptor.init({
-        addInterceptorForBanner,
-        logIntercept: state.logIntercept,
-        getState: state.get,
-        proxyServer,
-        targetUrl: state.get().appUrls.cli,
-      })
     addInterceptorForBanner({ proxyServer, domain })
     console.log(`🎭 ProxyPackInterceptorServer started on localhost:${port}`)
   })
 
 // for debugging hoxy
-proxyServer.log('error', function(event) {
-  console.error(event.level + ': ' + event.message)
-  if (event.error) console.error(event.error.stack)
-})
+// proxyServer.log('error', function (event) {
+//   console.error(event.level + ': ' + event.message)
+//   if (event.error) console.error(event.error.stack)
+// })
 
 module.exports = {
   updateWebpackOutputPath(_path) {
@@ -83,7 +88,11 @@ module.exports = {
       })
       withRpcServer &&
         rpcServer.init({
-          onExternalMappingsChange: state.setExternalMappings,
+          onExternalMappingsChange(externalMappings) {
+            state.setExternalMappings(externalMappings)
+            addExternalMappingsInterceptor(proxyServer)
+          },
+          onSetOptions: setOptions,
         })
     }
   },

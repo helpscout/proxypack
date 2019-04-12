@@ -1,8 +1,9 @@
 const http = require('http')
 const url = require('url')
 const _browser = require('../browser')
+const state = require('../proxyServer/state')
 
-function init({ onExternalMappingsChange }) {
+function init({ onExternalMappingsChange, onSetOptions }) {
   const server = http.createServer(requestListener)
   const PORT = 17777
   console.log(`🎭 ProxyPackRPCServer started on localhost:${PORT}`)
@@ -17,12 +18,23 @@ function init({ onExternalMappingsChange }) {
       },
     },
     openBrowser: {
-      exec(params) {
+      exec() {
         return new Promise(resolve => {
-          const { browser, domain } = params
+          const { browser, domain } = state.get()
           _browser.initBrowser({ browser, domain })
           resolve({
             openBrowser: 'success',
+          })
+        })
+      },
+    },
+    setOptions: {
+      exec({ browser = 'chrome', domain }) {
+        return new Promise(resolve => {
+          onSetOptions({ browser, domain })
+          resolve({
+            browser,
+            domain,
           })
         })
       },
@@ -60,7 +72,6 @@ function init({ onExternalMappingsChange }) {
 
         Promise.all(promiseArr)
           .then(iter => {
-            console.log(iter)
             let response = {}
             iter.forEach((val, index) => {
               response[keys[index]] = val
