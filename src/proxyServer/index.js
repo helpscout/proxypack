@@ -22,8 +22,9 @@ function setOptions({ browser, domain: _domain }) {
 }
 
 function addExternalMappingsInterceptor(proxyServer) {
-  const { externalMappings } = state.get()
+  const { cachingRef, externalMappings } = state.get()
   externalInterceptor.init({
+    cachingRef,
     externalMappings,
     logIntercept: state.logIntercept,
     proxyServer,
@@ -92,6 +93,7 @@ module.exports = {
             state.setExternalMappings(externalMappings)
             addExternalMappingsInterceptor(proxyServer)
           },
+          onSetCachingRef: state.setCachingRef,
           onSetOptions: setOptions,
         })
     }

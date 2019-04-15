@@ -4,6 +4,7 @@ const state = require('../../proxyServer/state')
 
 let _state = {
   browser: 'chrome',
+  cachingRef: '12345678',
   certAuthority: {
     key: fs.readFileSync(
       path.resolve(__dirname, '../../assets/ssl/proxypack.key.pem'),

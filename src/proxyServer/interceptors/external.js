@@ -1,16 +1,20 @@
 const path = require('path')
 const axios = require('axios')
 
-function init({ externalMappings, proxyServer }) {
+function init({ cachingRef, externalMappings, proxyServer }) {
   function addInterceptor(mapping) {
     const [targetUrl, proxyPath] = mapping
 
     function handleInterceptor(request, response) {
+      if (!request.url) {
+        return
+      }
+
       return new Promise((resolve, reject) => {
         let filename, filepath
         try {
           filename = path.parse(request.url).base
-          filepath = proxyPath + filename
+          filepath = proxyPath + filename + '?' + 'uid=' + cachingRef
         } catch (error) {
           throw new Error(
             'ProxyPack externalMappingsInterceptor error',
@@ -23,8 +27,8 @@ function init({ externalMappings, proxyServer }) {
           .then(function(_response) {
             if (typeof _response.data !== 'string') {
               throw new Error(
-                'ProxyPack externalMappingsInterceptor error, not a string',
-                request.url,
+                'ProxyPack externalMappingsInterceptor error, not a string' +
+                  request.url,
               )
             }
 

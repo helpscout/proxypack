@@ -3,6 +3,7 @@ const path = require('path')
 
 let state = {
   browser: 'chrome',
+  cachingRef: '',
   certAuthority: {
     key: fs.readFileSync(
       path.resolve(__dirname, '../assets/ssl/proxypack.key.pem'),
@@ -39,6 +40,10 @@ function setExternalMappings(externalMappings) {
   set({ externalMappings })
 }
 
+function setCachingRef({ ref }) {
+  set({ cachingRef: ref })
+}
+
 function logIntercept(intercept) {
   set({
     intercepts: [...state.intercepts, intercept],
@@ -56,6 +61,7 @@ module.exports = {
   get,
   logIntercept,
   set,
+  setCachingRef,
   setExternalMappings,
   setOptions,
   updateExternalResource,

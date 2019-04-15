@@ -16,11 +16,6 @@ function openBrowser({ browser, domain }) {
           '--disable-web-security',
           '--disable-extensions',
           '--ignore-certificate-errors',
-          '--aggressive-cache-discard',
-          '--disable-cache',
-          '--disable-application-cache',
-          '--disable-offline-load-stale-cache',
-          '--disk-cache-size=0',
         ],
       },
       function(error, instance) {
