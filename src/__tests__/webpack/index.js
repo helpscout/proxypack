@@ -8,6 +8,18 @@ const compiler = {
   },
 }
 
+const _proxyServer = jest.mock('hoxy', () => {
+  return {
+    createServer: function() {
+      return this
+    },
+    listen: function(port, callback) {
+      callback(_proxyServer)
+      return this
+    },
+  }
+})
+
 const browser = 'firefox'
 const domain = 'https://secure.helpscout.net'
 const webpackMappings = [
