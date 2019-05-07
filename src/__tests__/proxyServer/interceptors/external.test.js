@@ -19,8 +19,6 @@ describe('externalInterceptor', () => {
     }
   }
 
-  const logInterceptSpy = jest.fn()
-
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -29,7 +27,6 @@ describe('externalInterceptor', () => {
     externalInterceptor.init({
       externalMappings,
       getExternalResource,
-      logIntercept: logInterceptSpy,
       proxyServer,
     })
     expect(proxyServer.intercept).toHaveReturnedTimes(1)
@@ -43,37 +40,4 @@ describe('externalInterceptor', () => {
       expect.any(Function),
     )
   })
-
-  // it('should call logIntercept', () => {
-  //   const request = {
-  //     url: targetUrl,
-  //     headers: {},
-  //   }
-  //   const response = {
-  //     headers: {},
-  //   }
-  //   externalInterceptor.init({
-  //     externalMappings,
-  //     logIntercept: logInterceptSpy,
-  //     proxyServer,
-  //   })
-
-  //   moxios.stubRequest('/say/hello', {
-  //     status: 200,
-  //     responseText: 'hello'
-  //   })
-
-  //   proxyServer.simulate(request, response, {}, targetUrl)
-  //   // next tick
-  //   return flushPromises().then(() => {
-  //     expect(logInterceptSpy).toHaveBeenCalledTimes(1)
-  //     expect(logInterceptSpy).toHaveBeenCalledWith({
-  //       request,
-  //       response,
-  //       targetUrl,
-  //       proxyUrl,
-  //       type: 'external',
-  //     })
-  // })
-  // })
 })

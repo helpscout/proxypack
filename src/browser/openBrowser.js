@@ -15,7 +15,7 @@ function openBrowser({ browser, domain }) {
         options: [
           '--disable-web-security',
           '--disable-extensions',
-          '--ignore-certificate-errors',
+          '--ignore-certificate-errors'
         ],
       },
       function(error, instance) {
@@ -26,10 +26,10 @@ function openBrowser({ browser, domain }) {
         console.log(
           `🎭 ProxyPack instance started for ${domain} in ${browser}.`,
         )
-        instance.process.unref()
-        instance.process.stdin.unref()
-        instance.process.stdout.unref()
-        instance.process.stderr.unref()
+        // instance.process.unref()
+        // instance.process.stdin.unref()
+        // instance.process.stdout.unref()
+        // instance.process.stderr.unref()
         instance.on('stop', function(code) {
           console.log('Instance stopped with exit code:', code)
         })

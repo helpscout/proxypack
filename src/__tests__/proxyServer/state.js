@@ -60,7 +60,6 @@ describe('state', () => {
       targetUrl: 'http://localhost:3001/static/js/main.2.1.js',
       proxyUrl: 'http://www.someotherserver.com/static/js/main.2.1.js',
     }
-    state.logIntercept(intercept)
     expect(state.get()).toEqual({ ..._state, intercepts: [intercept] })
   })
 })

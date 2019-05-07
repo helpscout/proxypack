@@ -1,4 +1,4 @@
-const bannerInterceptor = require('../../../proxyServer/interceptors/banner.js')
+const domainInterceptor = require('../../../proxyServer/interceptors/banner.js')
 const proxyServer = require('../../../__mocks__/proxyServer')
 
 describe('webpackInterceptor', () => {
@@ -9,7 +9,7 @@ describe('webpackInterceptor', () => {
   })
 
   it('expect intercept to call with correct data', () => {
-    bannerInterceptor.init({
+    domainInterceptor.init({
       domain,
       proxyServer,
     })
@@ -31,14 +31,14 @@ describe('webpackInterceptor', () => {
 
     const response = {
       headers: {
-        'proxypack-type': 'banner',
+        'proxypack-interceptor-type': 'banner',
       },
       $: jest.fn(() => ({
         prepend: prependSpy,
       })),
     }
 
-    bannerInterceptor.init({
+    domainInterceptor.init({
       domain,
       proxyServer,
     })

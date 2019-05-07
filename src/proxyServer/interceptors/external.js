@@ -31,18 +31,10 @@ function init({ cachingRef, externalMappings, proxyServer }) {
                   request.url,
               )
             }
-
             response.statusCode = 203
             response.string = _response.data
-            response.headers['proxypack-type'] = 'external'
+            response.headers['proxypack-interceptor-type'] = 'external'
             response.headers['proxypack-url'] = filepath
-            // logIntercept({
-            //   response,
-            //   request,
-            //   proxyUrl: proxyPath,
-            //   targetUrl,
-            //   type: 'external',
-            // })
             resolve()
           })
           .catch(function(error) {
