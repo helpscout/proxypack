@@ -13,7 +13,7 @@ function init({
   getVirtualAssetURIsForWebpackEntry,
   getVirtualDomain,
   proxyServer,
-  setBranchName
+  setBranchName,
 }) {
   const banner = [
     '<div style="display: block; text-align: center; padding: 7px; width: 100%; background-color: #ffcc00; color: #000000; border-top: 1px solid #fff; box-sizing: border-box;">',
@@ -25,50 +25,54 @@ function init({
 
     function handleInterceptor(request, response, cycle) {
       return new Promise((resolve, reject) => {
-      /*  The domain is the first thing that loads, so we set the branch name here
+        /*  The domain is the first thing that loads, so we set the branch name here
       beacause it could have changed between refreshes, instead of detecting when
       a new git branch is checked out, we can just set it when the browser loads */
-      // return setBranchName().then(() => {
+        // return setBranchName().then(() => {
         // in the case of working from Webpack4 chunks, the number of scripts
         // may not be the same in local as prod, this is why we remove the scripts
         // and then re-add them
 
         try {
-        response.$('script[webpack-entry]').each(function (index) {
-          if (index === 0) {
-            const mountingNode = response.$(this)
-            const entry = mountingNode.attr('webpack-entry')
-            const scripts = getVirtualAssetURIsForWebpackEntry(entry).map(_entry => {
-              return `<script src="${_entry}" proxypack-entry="${entry}"></script>`
-            })
-            mountingNode.replaceWith(scripts)
-          } else {
-            response.$(this).remove()
-          }
-        })
+          response.$('script[webpack-entry]').each(function(index) {
+            if (index === 0) {
+              const mountingNode = response.$(this)
+              const entry = mountingNode.attr('webpack-entry')
+              const scripts = getVirtualAssetURIsForWebpackEntry(entry).map(
+                _entry => {
+                  return `<script src="${_entry}" proxypack-entry="${entry}"></script>`
+                },
+              )
+              mountingNode.replaceWith(scripts)
+            } else {
+              response.$(this).remove()
+            }
+          })
 
-        log.handleInterceptor({
-          proxyUrl: domain + '/*',
-          targetUrl: domain + '/*',
-          type: 'domain',
-        })
-        // hack the CSP header
-        // see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
-        response.headers['content-security-policy'] = `default-src * 'unsafe-inline'; font-src * data: 'unsafe-inline'; connect-src * 'unsafe-inline'; style-src * 'unsafe-inline'; script-src * 'unsafe-inline'; img-src *;`
-        // proxypack custom headers
-        response.headers['proxypack-interceptor-type'] = 'domain'
-        response.headers['proxypack-git-branch'] = getBranchName()
-        response.$('body').prepend(banner.join(' '))
-        resolve()
-      } catch (error) {
-        log.handleInterceptorError({
-          error: error,
-          proxyUrl: domain + '/*',
-          targetUrl: domain + '/*',
-          type: 'domain',
-        })
-        reject()
-      }
+          log.handleInterceptor({
+            proxyUrl: domain + '/*',
+            targetUrl: domain + '/*',
+            type: 'domain',
+          })
+          // hack the CSP header
+          // see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+          response.headers[
+            'content-security-policy'
+          ] = `default-src * 'unsafe-inline'; font-src * data: 'unsafe-inline'; connect-src * 'unsafe-inline'; style-src * 'unsafe-inline'; script-src * 'unsafe-inline'; img-src *;`
+          // proxypack custom headers
+          response.headers['proxypack-interceptor-type'] = 'domain'
+          response.headers['proxypack-git-branch'] = getBranchName()
+          response.$('body').prepend(banner.join(' '))
+          resolve()
+        } catch (error) {
+          log.handleInterceptorError({
+            error: error,
+            proxyUrl: domain + '/*',
+            targetUrl: domain + '/*',
+            type: 'domain',
+          })
+          reject()
+        }
       })
     }
 
