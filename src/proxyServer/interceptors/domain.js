@@ -5,6 +5,8 @@
  on the page.
  */
 
+const log = require('../../logger/')
+
 function init({
   domain,
   getBranchName,
@@ -44,6 +46,12 @@ function init({
             response.$(this).remove()
           }
         })
+
+        log.handleInterceptor({
+          proxyUrl: domain + '/*',
+          targetUrl: domain + '/*',
+          type: 'domain',
+        })
         // hack the CSP header
         // see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
         response.headers['content-security-policy'] = `default-src * 'unsafe-inline'; font-src * data: 'unsafe-inline'; connect-src * 'unsafe-inline'; style-src * 'unsafe-inline'; script-src * 'unsafe-inline'; img-src *;`
@@ -53,6 +61,12 @@ function init({
         response.$('body').prepend(banner.join(' '))
         resolve()
       } catch (error) {
+        log.handleInterceptorError({
+          error: error,
+          proxyUrl: domain + '/*',
+          targetUrl: domain + '/*',
+          type: 'domain',
+        })
         reject()
       }
       })
