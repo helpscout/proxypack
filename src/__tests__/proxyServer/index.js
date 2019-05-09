@@ -22,7 +22,6 @@ jest.mock('../../proxyServer/state', () => {
       this.state = { ...this.state, ...newState }
     },
     getExternalResource: jest.fn(),
-    logIntercept: jest.fn(),
   }
 })
 
@@ -57,8 +56,8 @@ const _proxyServer = jest.mock('hoxy', () => {
   }
 })
 
-const bannerInterceptor = require('../../proxyServer/interceptors/banner')
-bannerInterceptor.init = jest.fn()
+const domainInterceptor = require('../../proxyServer/interceptors/banner')
+domainInterceptor.init = jest.fn()
 
 const externalInterceptor = require('../../proxyServer/interceptors/external')
 externalInterceptor.init = jest.fn()
@@ -115,26 +114,23 @@ describe('proxyServer', () => {
 
     //next tick, something in hoxy doesnt' resolve completely in jest test
     setTimeout(() => {
-      expect(bannerInterceptor.init).toHaveBeenCalledTimes(1)
-      expect(bannerInterceptor.init).toHaveBeenCalledWith({
+      expect(domainInterceptor.init).toHaveBeenCalledTimes(1)
+      expect(domainInterceptor.init).toHaveBeenCalledWith({
         domain: 'http://www.helpscout.com',
         proxyServer: expect.any(Object),
       })
       expect(externalInterceptor.init).toHaveBeenCalledTimes(1)
       expect(externalInterceptor.init).toHaveBeenCalledWith({
         externalMappings,
-        logIntercept: expect.any(Function),
         proxyServer: expect.any(Object),
       })
       expect(localInterceptor.init).toHaveBeenCalledTimes(1)
       expect(localInterceptor.init).toHaveBeenCalledWith({
         localMappings,
-        logIntercept: expect.any(Function),
         proxyServer: expect.any(Object),
       })
       expect(webpackInterceptor.init).toHaveBeenCalledTimes(1)
       expect(webpackInterceptor.init).toHaveBeenCalledWith({
-        logIntercept: expect.any(Function),
         proxyServer: expect.any(Object),
         webpackMappings,
         webpackOutputPath,

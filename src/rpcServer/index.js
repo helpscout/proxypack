@@ -1,6 +1,6 @@
 const http = require('http')
 const url = require('url')
-const _browser = require('../browser')
+const openBrowser = require('../browser/openBrowser')
 const state = require('../proxyServer/state')
 
 function init({ onSetCachingRef, onExternalMappingsChange, onSetOptions }) {
@@ -21,7 +21,7 @@ function init({ onSetCachingRef, onExternalMappingsChange, onSetOptions }) {
       exec() {
         return new Promise(resolve => {
           const { browser, domain } = state.get()
-          _browser.initBrowser({ browser, domain })
+          openBrowser({ browser, domain })
           resolve({
             openBrowser: 'success',
           })
@@ -103,7 +103,6 @@ function init({ onSetCachingRef, onExternalMappingsChange, onSetOptions }) {
     response.setHeader('Content-Type', 'application/json')
 
     // avoid CORS errors
-
     response.setHeader('Access-Control-Allow-Origin', '*')
     response.setHeader(
       'Access-Control-Allow-Methods',

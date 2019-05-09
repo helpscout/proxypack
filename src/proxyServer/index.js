@@ -1,21 +1,29 @@
 const hoxy = require('hoxy')
-const bannerInterceptor = require('./interceptors/banner')
+const state = require('./state')
+const domainInterceptor = require('./interceptors/domain')
+const dynamicInterceptor = require('./interceptors/dynamic')
 const externalInterceptor = require('./interceptors/external')
 const localInterceptor = require('./interceptors/local')
 const rpcServer = require('../rpcServer/index')
 const webpackInterceptor = require('./interceptors/webpack')
-const state = require('./state')
-const { certAuthority, port } = state.get()
 
-function addInterceptorForBanner({ proxyServer, domain }) {
-  bannerInterceptor.init({ proxyServer, domain })
+function addInterceptorForDomain({ proxyServer, domain }) {
+  domainInterceptor.init({
+    domain,
+    getVirtualAssetURIsForWebpackEntry: state.getVirtualAssetURIsForWebpackEntry,
+    proxyServer,
+  })
 }
 
 function setOptions({ browser, domain: _domain }) {
   const { domain } = state.get()
   if (domain !== _domain) {
     state.setOptions({ browser, domain: _domain })
-    addInterceptorForBanner({ domain: _domain, proxyServer })
+    // if the domain has changed, we need to add an interceptor for it
+    addInterceptorForDomain({
+      domain: _domain,
+      proxyServer: state.getProxyServer()
+    })
   } else {
     state.setOptions({ browser, domain })
   }
@@ -26,76 +34,112 @@ function addExternalMappingsInterceptor(proxyServer) {
   externalInterceptor.init({
     cachingRef,
     externalMappings,
-    logIntercept: state.logIntercept,
     proxyServer,
   })
 }
 
-const proxyServer = hoxy
-  .createServer({ certAuthority })
-  .listen(port, status => {
-    const {
-      domain,
-      externalMappings,
-      localMappings,
-      webpackOutputPath,
-      webpackMappings,
-    } = state.get()
-    externalMappings && addExternalMappingsInterceptor(proxyServer)
-    webpackMappings &&
-      webpackInterceptor.init({
-        logIntercept: state.logIntercept,
-        proxyServer,
-        webpackMappings,
-        webpackOutputPath,
-      })
-    localMappings &&
-      localInterceptor.init({
-        localMappings,
-        logIntercept: state.logIntercept,
-        proxyServer,
-      })
-    addInterceptorForBanner({ proxyServer, domain })
-    console.log(`🎭 ProxyPackInterceptorServer started on localhost:${port}`)
-  })
+function initProxyServer() {
+  const { certAuthority, port } = state.get()
 
-// for debugging hoxy
-// proxyServer.log('error', function (event) {
-//   console.error(event.level + ': ' + event.message)
-//   if (event.error) console.error(event.error.stack)
-// })
+  const proxyServer = hoxy
+    .createServer({ certAuthority })
+    .listen(port, status => {
+      // to do change these to getters
+      const {
+        domain,
+        dynamicMappings,
+        externalMappings,
+        localMappings,
+        webpackOutputPath,
+        webpackMappings,
+        useReplaceScriptBlockWithWebpackEntries
+      } = state.get()
+
+      addInterceptorForDomain({
+        domain,
+        proxyServer,
+      })
+
+      dynamicMappings && dynamicInterceptor.init({
+        dynamicMappings,
+        isFileNameWebpackEntry: state.isFileNameWebpackEntry,
+        getVirtualAssetURIsForWebpackEntry: state.getVirtualAssetURIsForWebpackEntry,
+        getLocalUriFromAssetsByChunkName: state.getLocalUriFromAssetsByChunkName,
+        getWebpackEntryNameFromFileName: state.getWebpackEntryNameFromFileName,
+        proxyServer,
+      })
+
+      externalMappings && addExternalMappingsInterceptor(proxyServer)
+
+      webpackMappings &&
+        webpackInterceptor.init({
+          proxyServer,
+          webpackMappings,
+          webpackOutputPath,
+        })
+
+      localMappings &&
+        localInterceptor.init({
+          localMappings,
+          proxyServer,
+        })
+
+
+      console.log(`🎭 ProxyPackInterceptorServer started on localhost:${port}`)
+    })
+  state.setProxyServer(proxyServer)
+
+  // for debugging hoxy
+  // proxyServer.log('error', function (event) {
+  //   console.error(event.level + ': ' + event.message)
+  //   if (event.error) console.error(event.error.stack)
+  // })
+}
 
 module.exports = {
   updateWebpackOutputPath(_path) {
     state.set({ webpackOutputPath: _path })
   },
+  updateWebpackEntries(webpackEntries) {
+    state.updateWebpackEntries(webpackEntries)
+  },
+  updateWebpackAssetsByChunkName(assetsByChunkName) {
+    state.updateWebpackAssetsByChunkName(assetsByChunkName)
+  },
   init({
     browser = '',
     domain = '',
+    dynamicMappings = [],
     externalMappings = {},
+    localDist = '',
     localMappings = {},
     webpackMappings = [],
-    withRpcServer = false,
+    useReplaceScriptBlockWithWebpackEntries
   }) {
     const { isInit } = state.get()
     if (!isInit) {
-      state.set({
-        browser,
-        domain,
-        externalMappings,
-        isInit: true,
-        localMappings,
-        webpackMappings,
-      })
-      withRpcServer &&
+      state.onReady(() => {
+        state.set({
+          browser,
+          domain,
+          dynamicMappings,
+          externalMappings,
+          isInit: true,
+          localDist,
+          localMappings,
+          useReplaceScriptBlockWithWebpackEntries,
+          webpackMappings,
+        })
+        initProxyServer()
         rpcServer.init({
           onExternalMappingsChange(externalMappings) {
-            state.setExternalMappings(externalMappings)
-            addExternalMappingsInterceptor(proxyServer)
+            externalMappings && state.setExternalMappings(externalMappings)
+            externalMappings && addExternalMappingsInterceptor(proxyServer)
           },
           onSetCachingRef: state.setCachingRef,
           onSetOptions: setOptions,
         })
+      })
     }
   },
 }

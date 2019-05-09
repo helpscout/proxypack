@@ -1,8 +1,8 @@
 const path = require('path')
 const fs = require('fs')
+const log = require('../../logger')
 
 function init({
-  logIntercept,
   proxyServer,
   webpackMappings,
   webpackOutputPath,
@@ -19,12 +19,11 @@ function init({
           response.statusCode = 203
           response.string = webpackFile
           response.headers['proxypack-type'] = 'webpack'
-          logIntercept({
-            response,
-            request,
-            targetUrl: targetUrl,
-            type: 'webpack',
-          })
+          log.handleInterceptor({
+            proxyUrl: webpackOutputPath + filename,
+            targetUrl: request.url,
+            type: 'webpack'
+        })
         }
       } catch (error) {
         console.error('There was an error serving a webpack file.', error)
