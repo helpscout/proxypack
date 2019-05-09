@@ -1,7 +1,7 @@
 const proxyServer = require('../src/proxyServer')
 
 proxyServer.init({
-  domain: 'https://secure.helpscout.net',
+  domain: 'http://127.0.0.1:8082',
   webpackMappings: [
     'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist/*',
     'https://dhmmnd775wlnp.cloudfront.net/*/js/apps/dist2/*',

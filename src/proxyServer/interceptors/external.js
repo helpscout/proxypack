@@ -1,5 +1,6 @@
 const path = require('path')
 const axios = require('axios')
+const log = require('../../logger')
 
 function init({ cachingRef, externalMappings, proxyServer }) {
   function addInterceptor(mapping) {
@@ -31,6 +32,12 @@ function init({ cachingRef, externalMappings, proxyServer }) {
                   request.url,
               )
             }
+            log.handleInterceptor({
+              proxyUrl: filepath,
+              targetUrl: request.url,
+              type: 'external'
+          })
+
             response.statusCode = 203
             response.string = _response.data
             response.headers['proxypack-interceptor-type'] = 'external'

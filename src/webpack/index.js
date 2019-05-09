@@ -1,5 +1,5 @@
 class ProxyPackPlugin {
-  constructor({ browser, domain, dynamicMappings, externalMappings, localMappings, webpackMappings, useReplaceScriptBlockWithWebpackEntries }) {
+  constructor({ browser, domain, dynamicMappings, externalMappings, localDist, localMappings, webpackMappings, useReplaceScriptBlockWithWebpackEntries }) {
     this.opts = {
       fields: ['entrypoints', 'assetsByChunkName']
     }
@@ -9,6 +9,7 @@ class ProxyPackPlugin {
       domain,
       dynamicMappings,
       externalMappings,
+      localDist,
       localMappings,
       webpackMappings,
       useReplaceScriptBlockWithWebpackEntries

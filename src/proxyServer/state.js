@@ -15,6 +15,7 @@ let state = {
     ),
   },
   domain: '',
+  localDist: '',
   isLoggingEnabled: true,
   externalResources: {},
   hash: '',
@@ -22,7 +23,6 @@ let state = {
   isInit: false,
   port: 7777,
   webpackOutputPath: '',
-  virtualDomain: 'https://www.proxypack.io',
 }
 
 function get() {
@@ -31,10 +31,6 @@ function get() {
 
 function getIsLoggingEnabled() {
   return state.isLoggingEnabled
-}
-
-function getVirtualDomain() {
-  return state.virtualDomain
 }
 
 function set(newState) {
@@ -70,22 +66,27 @@ function getVirtualAssetURIsForWebpackEntry(entryName) {
       // filter out source maps, since this is for inside browser
       return filename.split('.').pop() !== 'map'
     }).map(filename => {
-      console.log(filename)
-      // return state.virtualDomain + '/?redirect=' + state.webpackOutputPath + filename
-      return state.virtualDomain + '/?redirect=' + state.webpackOutputPath + filename
+      return  state.localDist + filename
     })
 }
 
 // returns an array, right now only being used for dynamic imports
-function getLocalUriFromAssetsByChunkName(entryName) {
+function getLocalUriFromAssetsByChunkName(entryName, isMap) {
   if (!state.webpackOutputPath || !state.assetsByChunkName || !state.assetsByChunkName[entryName]) {
     return []
   }
+
+  // this needs some tweaking but works for now
+  if (isMap) {
+    // return []
+    return state.webpackOutputPath + state.assetsByChunkName[entryName][1]
+  }
+
   return state.webpackOutputPath + state.assetsByChunkName[entryName][0]
+
 }
 
 function updateWebpackEntries(webpackEntries) {
-  console.log(webpackEntries)
   set({
     webpackEntries
   })
@@ -95,8 +96,6 @@ function updateWebpackAssetsByChunkName(assetsByChunkName) {
   set({
     assetsByChunkName
   })
-
-  console.log(assetsByChunkName)
 }
 
 function setBranchName() {
@@ -130,7 +129,6 @@ module.exports = {
   getLocalUriFromAssetsByChunkName,
   getProxyServer,
   getVirtualAssetURIsForWebpackEntry,
-  getVirtualDomain,
   onReady,
   set,
   setBranchName,

@@ -1,4 +1,5 @@
 const fs = require('fs')
+const log = require('../../logger')
 
 function init({ localMappings, proxyServer }) {
   function addInterceptor(mapping) {
@@ -10,6 +11,11 @@ function init({ localMappings, proxyServer }) {
         response.statusCode = 203
         response.string = file
         response.headers['proxypack-interceptor-type'] = 'local'
+        log.handleInterceptor({
+          proxyUrl: localLocation,
+          targetUrl: request.url,
+          type: 'local'
+      })
       } catch (error) {
         console.log('There was an error fetching a local file.', error)
       }

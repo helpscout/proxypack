@@ -1,5 +1,5 @@
 const path = require('path')
-const fs = require('fs')
+const log = require('../../logger')
 
 function init({
     dynamicMappings,
@@ -7,34 +7,27 @@ function init({
     proxyServer,
 }) {
     function addInterceptor(targetUrl) {
-        function handleInterceptor(request, response) {
+        function handleInterceptor(request, response, cycle) {
             let filename = path.parse(request.url).base
-            // should be able to write something better for this, but want to get
-            // this in so we can start using it, and it can be fixed if we change
-            // our file naming
-            // webpack also has the following info which might come in handy later
-            // hashFunction: 'md4',
-            // hashDigest: 'hex',
-            // hashDigestLength: 20,
-            const nameWithoutHash = filename.substr(0, filename.length - 24)
-            const localPath = getLocalUriFromAssetsByChunkName(nameWithoutHash)
 
-            try {
-                const webpackFile = fs.readFileSync(
-                    localPath,
-                    'utf8',
-                )
-                if (webpackFile) {
-                    response.statusCode = 203
-                    response.string = webpackFile
-                    response.headers['proxypack-interceptor-type'] = 'dynamic'
-                }
-            } catch (error) {
-                console.error('ProxyPack: There was an error serving a dynamicMappings file.')
-                console.error(`${request.url} did not resolve to ${localPath}`)
-                console.error(`${nameWithoutHash} might not exist.`)
-                console.error(error)
+            // this also needs some tweaking to match evey webpack config imaginable but a quick fix for now
+            let nameWithoutHash
+            const isMap = filename.substring(filename.length - 3, filename.length) === 'map'
+            if(isMap) {
+                nameWithoutHash =  filename.substr(0, filename.length - 28)
+            } else {
+                nameWithoutHash = filename.substr(0, filename.length - 24)
             }
+
+            const localPath = getLocalUriFromAssetsByChunkName(nameWithoutHash, isMap)
+            log.handleInterceptor({
+                proxyUrl: localPath,
+                targetUrl: request.url,
+                type: 'dynamic'
+            })
+            response.statusCode = 203
+            response.headers['proxypack-interceptor-type'] = 'dynamic'
+            return cycle.serve(localPath)
         }
 
         proxyServer.intercept(

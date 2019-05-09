@@ -6,16 +6,12 @@ const externalInterceptor = require('./interceptors/external')
 const localInterceptor = require('./interceptors/local')
 const rpcServer = require('../rpcServer/index')
 const webpackInterceptor = require('./interceptors/webpack')
-const virtualDomainInterceptor = require('./interceptors/virtualDomain')
 
 function addInterceptorForDomain({ proxyServer, domain }) {
   domainInterceptor.init({
     domain,
-    getBranchName: state.getBranchName,
     getVirtualAssetURIsForWebpackEntry: state.getVirtualAssetURIsForWebpackEntry,
-    getVirtualDomain: state.getVirtualDomain,
     proxyServer,
-    setBranchName: state.setBranchName
   })
 }
 
@@ -61,7 +57,7 @@ function initProxyServer() {
 
       addInterceptorForDomain({
         domain,
-        proxyServer
+        proxyServer,
       })
 
       dynamicMappings && dynamicInterceptor.init({
@@ -88,12 +84,6 @@ function initProxyServer() {
           proxyServer,
         })
 
-      const virtualDomain= state.getVirtualDomain()
-      virtualDomain && virtualDomainInterceptor.init({
-        domain: virtualDomain,
-        proxyServer,
-        useReplaceScriptBlockWithWebpackEntries
-      })
 
       console.log(`🎭 ProxyPackInterceptorServer started on localhost:${port}`)
     })
@@ -121,6 +111,7 @@ module.exports = {
     domain = '',
     dynamicMappings = [],
     externalMappings = {},
+    localDist = '',
     localMappings = {},
     webpackMappings = [],
     useReplaceScriptBlockWithWebpackEntries
@@ -134,6 +125,7 @@ module.exports = {
           dynamicMappings,
           externalMappings,
           isInit: true,
+          localDist,
           localMappings,
           useReplaceScriptBlockWithWebpackEntries,
           webpackMappings,
@@ -141,8 +133,8 @@ module.exports = {
         initProxyServer()
         rpcServer.init({
           onExternalMappingsChange(externalMappings) {
-            state.setExternalMappings(externalMappings)
-            addExternalMappingsInterceptor(proxyServer)
+            externalMappings && state.setExternalMappings(externalMappings)
+            externalMappings && addExternalMappingsInterceptor(proxyServer)
           },
           onSetCachingRef: state.setCachingRef,
           onSetOptions: setOptions,
