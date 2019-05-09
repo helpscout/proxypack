@@ -24,7 +24,7 @@ jest.mock('../../proxyServer/state', () => {
     },
     getExternalResource: jest.fn(),
     getIsLoggingEnabled: jest.fn(),
-    onReady: jest.fn()
+    onReady: jest.fn(),
   }
 })
 

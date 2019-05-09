@@ -60,18 +60,27 @@ function updateExternalResource(externalResource) {
 
 // virtualURIs are intercepted from the virutal domain
 function getVirtualAssetURIsForWebpackEntry(entryName) {
-  return state.webpackOutputPath && state.webpackEntries && state.webpackEntries[entryName].assets
-    .filter(filename => {
-      // filter out source maps, since this is for inside browser
-      return filename.split('.').pop() !== 'map'
-    }).map(filename => {
-      return  state.localDist + filename
-    })
+  return (
+    state.webpackOutputPath &&
+    state.webpackEntries &&
+    state.webpackEntries[entryName].assets
+      .filter(filename => {
+        // filter out source maps, since this is for inside browser
+        return filename.split('.').pop() !== 'map'
+      })
+      .map(filename => {
+        return state.localDist + filename
+      })
+  )
 }
 
 // returns an array, right now only being used for dynamic imports
 function getLocalUriFromAssetsByChunkName(entryName, isMap) {
-  if (!state.webpackOutputPath || !state.assetsByChunkName || !state.assetsByChunkName[entryName]) {
+  if (
+    !state.webpackOutputPath ||
+    !state.assetsByChunkName ||
+    !state.assetsByChunkName[entryName]
+  ) {
     return []
   }
 
@@ -82,23 +91,22 @@ function getLocalUriFromAssetsByChunkName(entryName, isMap) {
   }
 
   return state.webpackOutputPath + state.assetsByChunkName[entryName][0]
-
 }
 
 function updateWebpackEntries(webpackEntries) {
   set({
-    webpackEntries
+    webpackEntries,
   })
 }
 
 function updateWebpackAssetsByChunkName(assetsByChunkName) {
   set({
-    assetsByChunkName
+    assetsByChunkName,
   })
 }
 
 function setBranchName() {
-  return branchName.get().then((name) => {
+  return branchName.get().then(name => {
     set({ branchName: name })
   })
 }
@@ -137,5 +145,5 @@ module.exports = {
   setProxyServer,
   updateExternalResource,
   updateWebpackAssetsByChunkName,
-  updateWebpackEntries
+  updateWebpackEntries,
 }

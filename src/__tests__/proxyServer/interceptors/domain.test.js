@@ -17,7 +17,7 @@ describe('webpackInterceptor', () => {
     expect(proxyServer.intercept).toHaveBeenCalledWith(
       {
         phase: 'response',
-        responseMimeType: "text/html",
+        responseMimeType: 'text/html',
         fullUrl: domain + '/*',
         as: '$',
       },
@@ -36,7 +36,7 @@ describe('webpackInterceptor', () => {
       },
       $: jest.fn(() => ({
         prepend: prependSpy,
-        each: eachSpy
+        each: eachSpy,
       })),
     }
 

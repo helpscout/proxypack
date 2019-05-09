@@ -3,7 +3,7 @@ const path = require('path')
 const state = require('../../proxyServer/state')
 
 let _state = {
-  branchName: "",
+  branchName: '',
   browser: 'chrome',
   cachingRef: '12345678',
   certAuthority: {
