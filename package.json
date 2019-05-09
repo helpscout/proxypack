@@ -31,7 +31,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@helpscout/zero": "^3.0.2",
+    "@helpscout/zero": "^3.2.1",
     "axios-mock-adapter": "^1.16.0",
     "babel-core": "^7.0.0-bridge.0",
     "jest": "^24.1.0",
@@ -44,7 +44,7 @@
     "chalk": "^2.4.2",
     "hoxy": "^3.3.1",
     "safe-commander": "^2.11.2",
-    "zero": "^1.0.15"
+    "zero": "^3.2.1"
   },
   "repository": {
     "type": "git",

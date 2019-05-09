@@ -3,6 +3,7 @@ const path = require('path')
 const state = require('../../proxyServer/state')
 
 let _state = {
+  branchName: "",
   browser: 'chrome',
   cachingRef: '12345678',
   certAuthority: {
@@ -15,8 +16,9 @@ let _state = {
   },
   domain: '',
   externalResources: {},
-  intercepts: [],
+  isLoggingEnabled: false,
   isInit: false,
+  localDist: '',
   port: 7777,
   webpackOutputPath: '',
 }
@@ -52,14 +54,5 @@ describe('state', () => {
     expect(state.getExternalResource(Object.keys(newResource)[0])).toEqual(
       'source code',
     )
-  })
-
-  it('should log an intercept', () => {
-    let intercept = {
-      statusCode: 200,
-      targetUrl: 'http://localhost:3001/static/js/main.2.1.js',
-      proxyUrl: 'http://www.someotherserver.com/static/js/main.2.1.js',
-    }
-    expect(state.get()).toEqual({ ..._state, intercepts: [intercept] })
   })
 })

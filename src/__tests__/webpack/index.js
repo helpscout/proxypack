@@ -41,6 +41,10 @@ const proxyServer = {
   updateWebpackOutputPath: updateWebpackOutputPathSpy,
 }
 
+jest.mock('../proxyServer', function() {
+  return proxyServer
+})
+
 describe('webpack proxy pack plugin', () => {
   it('should be defined', () => {
     const proxyPackPlugin = new ProxyPackPlugin({
@@ -48,7 +52,6 @@ describe('webpack proxy pack plugin', () => {
       domain,
       externalMappings,
       localMappings,
-      proxyServer,
       webpackMappings,
     })
     expect(proxyPackPlugin).toBeDefined()
@@ -60,13 +63,5 @@ describe('webpack proxy pack plugin', () => {
       localMappings,
       webpackMappings,
     })
-  })
-  it('shoud call updateWebpackOutputPath', () => {
-    const proxyPackPlugin = new ProxyPackPlugin({ proxyServer })
-    proxyPackPlugin.apply(compiler)
-    expect(updateWebpackOutputPathSpy).toHaveBeenCalledTimes(1)
-    expect(updateWebpackOutputPathSpy).toHaveBeenCalledWith(
-      compiler.options.output.path,
-    )
   })
 })

@@ -1,4 +1,4 @@
-const domainInterceptor = require('../../../proxyServer/interceptors/banner.js')
+const domainInterceptor = require('../../../proxyServer/interceptors/domain.js')
 const proxyServer = require('../../../__mocks__/proxyServer')
 
 describe('webpackInterceptor', () => {
@@ -16,8 +16,8 @@ describe('webpackInterceptor', () => {
     expect(proxyServer.intercept).toHaveBeenCalledTimes(1)
     expect(proxyServer.intercept).toHaveBeenCalledWith(
       {
-        contentType: 'text/html; charset=UTF-8',
         phase: 'response',
+        responseMimeType: "text/html",
         fullUrl: domain + '/*',
         as: '$',
       },
@@ -26,6 +26,7 @@ describe('webpackInterceptor', () => {
   })
 
   it('expect response to prepend the banner', () => {
+    const eachSpy = jest.fn()
     const prependSpy = jest.fn()
     const request = {}
 
@@ -35,11 +36,13 @@ describe('webpackInterceptor', () => {
       },
       $: jest.fn(() => ({
         prepend: prependSpy,
+        each: eachSpy
       })),
     }
 
     domainInterceptor.init({
       domain,
+      getVirtualAssetURIsForWebpackEntry: jest.fn(),
       proxyServer,
     })
 

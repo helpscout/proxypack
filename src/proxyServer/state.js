@@ -18,9 +18,8 @@ let state = {
   localDist: '',
   isLoggingEnabled: true,
   externalResources: {},
-  hash: '',
-  intercepts: [],
   isInit: false,
+  localDist: '',
   port: 7777,
   webpackOutputPath: '',
 }

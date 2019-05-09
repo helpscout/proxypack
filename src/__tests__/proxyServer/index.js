@@ -12,6 +12,7 @@ jest.mock('../../proxyServer/state', () => {
       externalResources: {},
       intercepts: [],
       isInit: false,
+      isLoggingEnabled: false,
       port: 7777,
       webpackOutputPath: '/Users/tjbo/sites/hsapp/site/js/dist/',
     },
@@ -22,6 +23,8 @@ jest.mock('../../proxyServer/state', () => {
       this.state = { ...this.state, ...newState }
     },
     getExternalResource: jest.fn(),
+    getIsLoggingEnabled: jest.fn(),
+    onReady: jest.fn()
   }
 })
 
@@ -56,7 +59,7 @@ const _proxyServer = jest.mock('hoxy', () => {
   }
 })
 
-const domainInterceptor = require('../../proxyServer/interceptors/banner')
+const domainInterceptor = require('../../proxyServer/interceptors/domain')
 domainInterceptor.init = jest.fn()
 
 const externalInterceptor = require('../../proxyServer/interceptors/external')
