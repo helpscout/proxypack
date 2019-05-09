@@ -1,7 +1,7 @@
 const domainInterceptor = require('../../../proxyServer/interceptors/domain.js')
 const proxyServer = require('../../../__mocks__/proxyServer')
 
-describe('webpackInterceptor', () => {
+describe.only('webpackInterceptor', () => {
   const domain = 'test.com'
 
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe('webpackInterceptor', () => {
     expect(proxyServer.intercept).toHaveBeenCalledWith(
       {
         phase: 'response',
-        responseMimeType: 'text/html',
+        contentType: 'text/html; charset=UTF-8',
         fullUrl: domain + '/*',
         as: '$',
       },
@@ -42,7 +42,7 @@ describe('webpackInterceptor', () => {
 
     domainInterceptor.init({
       domain,
-      getVirtualAssetURIsForWebpackEntry: jest.fn(),
+      getLocalAssetURIsForWebpackEntry: jest.fn(),
       proxyServer,
     })
 

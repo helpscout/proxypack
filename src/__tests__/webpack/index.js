@@ -1,24 +1,6 @@
 const ProxyPackPlugin = require('../../webpack')
-
-const compiler = {
-  options: {
-    output: {
-      path: '/Users/SteveAoki/sites/hsapp/',
-    },
-  },
-}
-
-const _proxyServer = jest.mock('hoxy', () => {
-  return {
-    createServer: function() {
-      return this
-    },
-    listen: function(port, callback) {
-      callback(_proxyServer)
-      return this
-    },
-  }
-})
+jest.mock('../../rpcServer')
+jest.mock('../../proxyServer')
 
 const browser = 'firefox'
 const domain = 'https://secure.helpscout.net'
@@ -34,17 +16,6 @@ const externalMappings = {
     'http://localhost:3001/static/js/main.2.1.js',
 }
 
-const initSpy = jest.fn()
-const updateWebpackOutputPathSpy = jest.fn()
-const proxyServer = {
-  init: initSpy,
-  updateWebpackOutputPath: updateWebpackOutputPathSpy,
-}
-
-jest.mock('../proxyServer', function() {
-  return proxyServer
-})
-
 describe('webpack proxy pack plugin', () => {
   it('should be defined', () => {
     const proxyPackPlugin = new ProxyPackPlugin({
@@ -55,6 +26,7 @@ describe('webpack proxy pack plugin', () => {
       webpackMappings,
     })
     expect(proxyPackPlugin).toBeDefined()
+    const initSpy = jest.spyOn(proxyPackPlugin.proxyServer, 'init')
     expect(initSpy).toHaveBeenCalledTimes(1)
     expect(initSpy).toHaveBeenCalledWith({
       browser,

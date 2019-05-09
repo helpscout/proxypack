@@ -1,8 +1,5 @@
 const webpackInterceptor = require('../../../proxyServer/interceptors/webpack.js')
 const proxyServer = require('../../../__mocks__/proxyServer')
-jest.mock('fs')
-const fs = require('fs')
-const errorSpy = jest.spyOn(global.console, 'error')
 
 describe('webpackInterceptor', () => {
   const webpackMappings = [

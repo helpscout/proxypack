@@ -10,7 +10,7 @@ const webpackInterceptor = require('./interceptors/webpack')
 function addInterceptorForDomain({ proxyServer, domain }) {
   domainInterceptor.init({
     domain,
-    getVirtualAssetURIsForWebpackEntry: state.getVirtualAssetURIsForWebpackEntry,
+    getLocalAssetURIsForWebpackEntry: state.getLocalAssetURIsForWebpackEntry,
     proxyServer,
   })
 }
@@ -22,15 +22,15 @@ function setOptions({ browser, domain: _domain }) {
     // if the domain has changed, we need to add an interceptor for it
     addInterceptorForDomain({
       domain: _domain,
-      proxyServer: state.getProxyServer()
+      proxyServer: state.getProxyServer(),
     })
   } else {
     state.setOptions({ browser, domain })
   }
 }
 
-function addExternalMappingsInterceptor(proxyServer) {
-  const { cachingRef, externalMappings } = state.get()
+function addExternalMappingsInterceptor() {
+  const { cachingRef, externalMappings, proxyServer } = state.get()
   externalInterceptor.init({
     cachingRef,
     externalMappings,
@@ -52,22 +52,24 @@ function initProxyServer() {
         localMappings,
         webpackOutputPath,
         webpackMappings,
-        useReplaceScriptBlockWithWebpackEntries
+        useReplaceScriptBlockWithWebpackEntries,
       } = state.get()
 
       addInterceptorForDomain({
         domain,
+        getLocalAssetURIsForWebpackEntry:
+          state.getLocalAssetURIsForWebpackEntry,
         proxyServer,
+        useReplaceScriptBlockWithWebpackEntries,
       })
 
-      dynamicMappings && dynamicInterceptor.init({
-        dynamicMappings,
-        isFileNameWebpackEntry: state.isFileNameWebpackEntry,
-        getVirtualAssetURIsForWebpackEntry: state.getVirtualAssetURIsForWebpackEntry,
-        getLocalUriFromAssetsByChunkName: state.getLocalUriFromAssetsByChunkName,
-        getWebpackEntryNameFromFileName: state.getWebpackEntryNameFromFileName,
-        proxyServer,
-      })
+      dynamicMappings &&
+        dynamicInterceptor.init({
+          dynamicMappings,
+          getLocalUriFromAssetsByChunkName:
+            state.getLocalUriFromAssetsByChunkName,
+          proxyServer,
+        })
 
       externalMappings && addExternalMappingsInterceptor(proxyServer)
 
@@ -83,7 +85,6 @@ function initProxyServer() {
           localMappings,
           proxyServer,
         })
-
 
       console.log(`🎭 ProxyPackInterceptorServer started on localhost:${port}`)
     })
@@ -114,31 +115,29 @@ module.exports = {
     localDist = '',
     localMappings = {},
     webpackMappings = [],
-    useReplaceScriptBlockWithWebpackEntries
+    useReplaceScriptBlockWithWebpackEntries,
   }) {
     const { isInit } = state.get()
     if (!isInit) {
-      state.onReady(() => {
-        state.set({
-          browser,
-          domain,
-          dynamicMappings,
-          externalMappings,
-          isInit: true,
-          localDist,
-          localMappings,
-          useReplaceScriptBlockWithWebpackEntries,
-          webpackMappings,
-        })
-        initProxyServer()
-        rpcServer.init({
-          onExternalMappingsChange(externalMappings) {
-            externalMappings && state.setExternalMappings(externalMappings)
-            externalMappings && addExternalMappingsInterceptor(proxyServer)
-          },
-          onSetCachingRef: state.setCachingRef,
-          onSetOptions: setOptions,
-        })
+      state.set({
+        browser,
+        domain,
+        dynamicMappings,
+        externalMappings,
+        isInit: true,
+        localDist,
+        localMappings,
+        useReplaceScriptBlockWithWebpackEntries,
+        webpackMappings,
+      })
+      initProxyServer()
+      rpcServer.init({
+        onExternalMappingsChange(externalMappings) {
+          externalMappings && state.setExternalMappings(externalMappings)
+          externalMappings && addExternalMappingsInterceptor()
+        },
+        onSetCachingRef: state.setCachingRef,
+        onSetOptions: setOptions,
       })
     }
   },

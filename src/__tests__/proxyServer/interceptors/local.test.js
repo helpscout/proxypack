@@ -1,15 +1,13 @@
 const localInterceptor = require('../../../proxyServer/interceptors/local.js')
 const proxyServer = require('../../../__mocks__/proxyServer')
-jest.mock('fs')
-const fs = require('fs')
 
 describe('localInterceptor', () => {
   const localMappings = {
     'https://dhmmnd775wlnp.cloudfront.net/*/css/styles.css': `${__dirname}/site/css/styles.css`,
     'https://dhmmnd775wlnp.cloudfront.net/*/js/dashboard.js': `${__dirname}/site/js/dashboard.js`,
   }
-  const [targetUrl1, localLocation1] = Object.entries(localMappings)[0]
-  const [targetUrl2, localLocation2] = Object.entries(localMappings)[1]
+  const [targetUrl1] = Object.entries(localMappings)[0]
+  const [targetUrl2] = Object.entries(localMappings)[1]
 
   beforeEach(() => {
     jest.clearAllMocks()

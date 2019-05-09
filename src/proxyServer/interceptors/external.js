@@ -15,7 +15,7 @@ function init({ cachingRef, externalMappings, proxyServer }) {
         let filename, filepath
         try {
           filename = path.parse(request.url).base
-          filepath = proxyPath + filename + '?' + 'uid=' + cachingRef
+          filepath = `${proxyPath}${filename}?'uid='${cachingRef}`
         } catch (error) {
           throw new Error(
             'ProxyPack externalMappingsInterceptor error',
@@ -35,8 +35,8 @@ function init({ cachingRef, externalMappings, proxyServer }) {
             log.handleInterceptor({
               proxyUrl: filepath,
               targetUrl: request.url,
-              type: 'external'
-          })
+              type: 'external',
+            })
 
             response.statusCode = 203
             response.string = _response.data

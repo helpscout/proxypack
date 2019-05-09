@@ -19,7 +19,6 @@ let state = {
   isLoggingEnabled: true,
   externalResources: {},
   isInit: false,
-  localDist: '',
   port: 7777,
   webpackOutputPath: '',
 }
@@ -59,7 +58,7 @@ function updateExternalResource(externalResource) {
 }
 
 // virtualURIs are intercepted from the virutal domain
-function getVirtualAssetURIsForWebpackEntry(entryName) {
+function getLocalAssetURIsForWebpackEntry(entryName) {
   return (
     state.webpackOutputPath &&
     state.webpackEntries &&
@@ -115,11 +114,6 @@ function getBranchName() {
   return state.branchName
 }
 
-function onReady(callback) {
-  // added this but then didn't need it yet, but probably will at some point
-  callback()
-}
-
 function getProxyServer() {
   return state.proxyServer
 }
@@ -135,8 +129,7 @@ module.exports = {
   getIsLoggingEnabled,
   getLocalUriFromAssetsByChunkName,
   getProxyServer,
-  getVirtualAssetURIsForWebpackEntry,
-  onReady,
+  getLocalAssetURIsForWebpackEntry,
   set,
   setBranchName,
   setCachingRef,

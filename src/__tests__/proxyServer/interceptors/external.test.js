@@ -1,10 +1,6 @@
 const externalInterceptor = require('../../../proxyServer/interceptors/external.js')
 const proxyServer = require('../../../__mocks__/proxyServer')
 
-function flushPromises() {
-  return new Promise(resolve => setImmediate(resolve))
-}
-
 describe('externalInterceptor', () => {
   const externalMappings = {
     'https://beacon-v2.helpscout.net/static/js/main.2.1.f3df77f2.js':
