@@ -91,10 +91,10 @@ function initProxyServer() {
   state.setProxyServer(proxyServer)
 
   // for debugging hoxy
-  // proxyServer.log('error', function (event) {
-  //   console.error(event.level + ': ' + event.message)
-  //   if (event.error) console.error(event.error.stack)
-  // })
+  proxyServer.log('error', function(event) {
+    console.error(event.level + ': ' + event.message)
+    if (event.error) console.error(event.error.stack)
+  })
 }
 
 module.exports = {
