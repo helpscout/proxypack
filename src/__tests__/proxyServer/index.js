@@ -60,7 +60,7 @@ describe('proxyServer', () => {
     //   localMappings,
     //   externalMappings,
     // })
-    // proxyServer.updateWebpackOutputPath('/some/path')
+    // state.set({ webpackOutputPath: '/some/path' })
     // const expectedState = state.get()
     // expect(expectedState.webpackOutputPath).toEqual('/some/path')
   })
@@ -74,7 +74,7 @@ describe('proxyServer', () => {
   //     externalMappings,
   //   })
 
-  //   proxyServer.updateWebpackOutputPath(webpackOutputPath)
+  //   state.set.({ webpackOutputPath })
 
   //   //next tick, something in hoxy doesnt' resolve completely in jest test
   //   setTimeout(() => {

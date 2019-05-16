@@ -1,5 +1,5 @@
 const state = require('../proxyServer/state')
-const isEnabled = state.getIsLoggingEnabled()
+const isEnabled = state.get().isLoggingEnabled
 const chalk = require('chalk')
 const _log = console.log
 const line =
@@ -10,6 +10,13 @@ let count = 0
 function startLine() {
   count++
   return `[${count}] ${line}`
+}
+
+const handleAddInterceptor = function({ type, targetUrl }) {
+  if (!isEnabled) return
+  _log(chalk.blue(startLine()))
+  _log(chalk.blue(`${type}:addInterceptor`))
+  _log(chalk.blue(`targetUrl:${targetUrl}`))
 }
 
 const handleInterceptor = function({ type, proxyUrl, targetUrl, message }) {
@@ -32,5 +39,6 @@ const handleInterceptorError = function({ error, type, proxyUrl, targetUrl }) {
 
 module.exports = {
   handleInterceptor,
+  handleAddInterceptor,
   handleInterceptorError,
 }

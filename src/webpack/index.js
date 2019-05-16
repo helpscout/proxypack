@@ -1,4 +1,6 @@
 const proxyServer = require('../proxyServer')
+const state = require('../proxyServer/state')
+const webpackServer = require('./server')
 
 class ProxyPackPlugin {
   constructor({
@@ -28,7 +30,7 @@ class ProxyPackPlugin {
   }
 
   apply(compiler, compilation) {
-    this.proxyServer.updateWebpackOutputPath(compiler.options.output.path)
+    state.set({ webpackOutputPath: compiler.options.output.path })
 
     if (compiler.hooks) {
       compiler.hooks.emit.tapPromise(
@@ -71,11 +73,11 @@ class ProxyPackPlugin {
             throw err
           }
 
-          this.proxyServer.updateWebpackEntries(statsStr.entrypoints)
-          this.proxyServer.updateWebpackAssetsByChunkName(
-            statsStr.assetsByChunkName,
-          )
-
+          state.set({
+            webpackEntries: statsStr.entrypoints,
+            assetsByChunkName: statsStr.assetsByChunkName,
+          })
+          webpackServer.init()
           if (callback) {
             return void callback()
           }

@@ -16,16 +16,16 @@ function addInterceptorForDomain({ proxyServer, domain }) {
 }
 
 function setOptions({ browser, domain: _domain }) {
-  const { domain } = state.get()
+  const { domain, proxyServer } = state.get()
   if (domain !== _domain) {
-    state.setOptions({ browser, domain: _domain })
+    state.set({ browser, domain: _domain })
     // if the domain has changed, we need to add an interceptor for it
     addInterceptorForDomain({
       domain: _domain,
-      proxyServer: state.getProxyServer(),
+      proxyServer,
     })
   } else {
-    state.setOptions({ browser, domain })
+    state.set({ browser, domain })
   }
 }
 
@@ -46,30 +46,15 @@ function initProxyServer() {
     .listen(port, status => {
       // to do change these to getters
       const {
-        domain,
-        dynamicMappings,
         externalMappings,
         localMappings,
         webpackOutputPath,
         webpackMappings,
-        useReplaceScriptBlockWithWebpackEntries,
       } = state.get()
 
-      addInterceptorForDomain({
-        domain,
-        getLocalAssetURIsForWebpackEntry:
-          state.getLocalAssetURIsForWebpackEntry,
-        proxyServer,
-        useReplaceScriptBlockWithWebpackEntries,
-      })
+      proxyServer._server.timeout = 1500000
 
-      dynamicMappings &&
-        dynamicInterceptor.init({
-          dynamicMappings,
-          getLocalUriFromAssetsByChunkName:
-            state.getLocalUriFromAssetsByChunkName,
-          proxyServer,
-        })
+      domainInterceptor.init()
 
       externalMappings && addExternalMappingsInterceptor(proxyServer)
 
@@ -88,7 +73,7 @@ function initProxyServer() {
 
       console.log(`🎭 ProxyPackInterceptorServer started on localhost:${port}`)
     })
-  state.setProxyServer(proxyServer)
+  state.set({ proxyServer })
 
   // for debugging hoxy
   proxyServer.log('error', function(event) {
@@ -98,15 +83,6 @@ function initProxyServer() {
 }
 
 module.exports = {
-  updateWebpackOutputPath(_path) {
-    state.set({ webpackOutputPath: _path })
-  },
-  updateWebpackEntries(webpackEntries) {
-    state.updateWebpackEntries(webpackEntries)
-  },
-  updateWebpackAssetsByChunkName(assetsByChunkName) {
-    state.updateWebpackAssetsByChunkName(assetsByChunkName)
-  },
   init({
     browser = '',
     domain = '',

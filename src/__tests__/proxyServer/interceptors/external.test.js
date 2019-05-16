@@ -9,12 +9,6 @@ describe('externalInterceptor', () => {
 
   const [targetUrl, proxyUrl] = Object.entries(externalMappings)[0]
 
-  function getExternalResource() {
-    return {
-      [proxyUrl]: 'source code',
-    }
-  }
-
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -22,7 +16,6 @@ describe('externalInterceptor', () => {
   it('expect intercept to call with correct data', () => {
     externalInterceptor.init({
       externalMappings,
-      getExternalResource,
       proxyServer,
     })
     expect(proxyServer.intercept).toHaveReturnedTimes(1)

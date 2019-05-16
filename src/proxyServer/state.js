@@ -15,7 +15,8 @@ let state = {
     ),
   },
   domain: '',
-  localDist: '',
+  dynamicMappings: [],
+  _localDist: 'https://localhost:27777/',
   isLoggingEnabled: true,
   externalResources: {},
   isInit: false,
@@ -27,20 +28,8 @@ function get() {
   return state
 }
 
-function getIsLoggingEnabled() {
-  return state.isLoggingEnabled
-}
-
 function set(newState) {
   state = { ...state, ...newState }
-}
-
-function setOptions({ browser, domain }) {
-  set({ browser, domain })
-}
-
-function getExternalResource(proxyUrl) {
-  return state.externalResources[proxyUrl]
 }
 
 function setExternalMappings(externalMappings) {
@@ -68,7 +57,7 @@ function getLocalAssetURIsForWebpackEntry(entryName) {
         return filename.split('.').pop() !== 'map'
       })
       .map(filename => {
-        return state.localDist + filename
+        return state._localDist + filename
       })
   )
 }
@@ -86,22 +75,9 @@ function getLocalUriFromAssetsByChunkName(entryName, isMap) {
   // this needs some tweaking but works for now
   if (isMap) {
     // return []
-    return state.webpackOutputPath + state.assetsByChunkName[entryName][1]
+    return state._localDist + state.assetsByChunkName[entryName][1]
   }
-
-  return state.webpackOutputPath + state.assetsByChunkName[entryName][0]
-}
-
-function updateWebpackEntries(webpackEntries) {
-  set({
-    webpackEntries,
-  })
-}
-
-function updateWebpackAssetsByChunkName(assetsByChunkName) {
-  set({
-    assetsByChunkName,
-  })
+  return state._localDist + state.assetsByChunkName[entryName][0]
 }
 
 function setBranchName() {
@@ -110,33 +86,13 @@ function setBranchName() {
   })
 }
 
-function getBranchName() {
-  return state.branchName
-}
-
-function getProxyServer() {
-  return state.proxyServer
-}
-
-function setProxyServer(proxyServer) {
-  set({ proxyServer })
-}
-
 module.exports = {
   get,
-  getBranchName,
-  getExternalResource,
-  getIsLoggingEnabled,
   getLocalUriFromAssetsByChunkName,
-  getProxyServer,
   getLocalAssetURIsForWebpackEntry,
   set,
   setBranchName,
   setCachingRef,
   setExternalMappings,
-  setOptions,
-  setProxyServer,
   updateExternalResource,
-  updateWebpackAssetsByChunkName,
-  updateWebpackEntries,
 }
