@@ -1,0 +1,14 @@
+openssl req \
+    -x509 \
+    -new \
+    -nodes \
+    -keyout proxypack.key.pem \
+    -new \
+    -out proxypack.crt.pem \
+    -subj /CN=localhost/C=US/ST=Utah/L=Provo/O='ACME Signing Authority Inc' \
+    -reqexts SAN \
+    -extensions SAN \
+    -config <(cat /System/Library/OpenSSL/openssl.cnf \
+        <(printf '[SAN]\nsubjectAltName=DNS:localhost')) \
+    -sha256 \
+    -days 3650
