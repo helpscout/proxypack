@@ -9,11 +9,7 @@ const log = require('../../logger/')
 const state = require('../state')
 
 function init() {
-  const {
-    domain,
-    proxyServer,
-    useReplaceScriptBlockWithWebpackEntries,
-  } = state.get()
+  const { domain, proxyServer, localWebpackServerURL } = state.get()
 
   const banner = [
     '<div style="display: block; text-align: center; padding: 7px; width: 100%; background-color: #ffcc00; color: #000000; border-top: 1px solid #fff; box-sizing: border-box;">',
@@ -53,7 +49,7 @@ function init() {
               return `<script src="${_entry}" proxypack-entry="${scriptGroup}" type="text/javascript"></script>`
             })
           scriptsForWebpackEntryPoint.unshift(
-            `<script>window.proxyPackDynamicUrl='https://localhost:27777/'</script>`,
+            `<script>window.proxyPackDynamicUrl='${localWebpackServerURL}/'</script>`,
           )
           scriptGroups[scriptGroup].replaceWith(scriptsForWebpackEntryPoint)
         }

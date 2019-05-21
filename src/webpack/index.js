@@ -10,8 +10,9 @@ class ProxyPackPlugin {
     externalMappings,
     localDist,
     localMappings,
+    localSSLDir,
+    localWebpackServerURL,
     webpackMappings,
-    useReplaceScriptBlockWithWebpackEntries,
   }) {
     this.opts = {
       fields: ['entrypoints', 'assetsByChunkName'],
@@ -24,8 +25,9 @@ class ProxyPackPlugin {
       externalMappings,
       localDist,
       localMappings,
+      localSSLDir,
+      localWebpackServerURL,
       webpackMappings,
-      useReplaceScriptBlockWithWebpackEntries,
     })
   }
 

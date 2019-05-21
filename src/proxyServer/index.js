@@ -90,8 +90,9 @@ module.exports = {
     externalMappings = {},
     localDist = '',
     localMappings = {},
+    localSSLDir,
+    localWebpackServerURL,
     webpackMappings = [],
-    useReplaceScriptBlockWithWebpackEntries,
   }) {
     const { isInit } = state.get()
     if (!isInit) {
@@ -103,7 +104,8 @@ module.exports = {
         isInit: true,
         localDist,
         localMappings,
-        useReplaceScriptBlockWithWebpackEntries,
+        localSSLDir,
+        localWebpackServerURL,
         webpackMappings,
       })
       initProxyServer()

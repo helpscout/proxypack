@@ -16,7 +16,8 @@ let state = {
   },
   domain: '',
   dynamicMappings: [],
-  _localDist: 'https://localhost:27777/',
+  localSSLDir: '',
+  localWebpackServerURL: '',
   isLoggingEnabled: true,
   externalResources: {},
   isInit: false,
@@ -57,7 +58,7 @@ function getLocalAssetURIsForWebpackEntry(entryName) {
         return filename.split('.').pop() !== 'map'
       })
       .map(filename => {
-        return state._localDist + filename
+        return state.localWebpackServerURL + '/' + filename
       })
   )
 }
@@ -75,9 +76,13 @@ function getLocalUriFromAssetsByChunkName(entryName, isMap) {
   // this needs some tweaking but works for now
   if (isMap) {
     // return []
-    return state._localDist + state.assetsByChunkName[entryName][1]
+    return (
+      state.localWebpackServerURL + '/' + state.assetsByChunkName[entryName][1]
+    )
   }
-  return state._localDist + state.assetsByChunkName[entryName][0]
+  return (
+    state.localWebpackServerURL + '/' + state.assetsByChunkName[entryName][0]
+  )
 }
 
 function setBranchName() {

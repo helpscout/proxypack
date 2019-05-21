@@ -1,8 +1,6 @@
 const https = require('https')
 const state = require('../proxyServer/state')
 const fs = require('fs')
-const mime = require('mime')
-
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
 let isInit = false
@@ -12,11 +10,14 @@ const init = function() {
 
   isInit = true
 
-  const { certAuthority, webpackOutputPath } = state.get()
+  const { localSSLDir, webpackOutputPath } = state.get()
+
+  const key = fs.readFileSync(`${localSSLDir}localdev-ssl.key`, 'ascii')
+  const cert = fs.readFileSync(`${localSSLDir}localdev-ssl.crt`, 'ascii')
 
   const options = {
-    key: certAuthority.key,
-    cert: certAuthority.cert,
+    cert: cert,
+    key: key,
   }
 
   https
