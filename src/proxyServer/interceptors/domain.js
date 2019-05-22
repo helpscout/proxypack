@@ -63,7 +63,7 @@ function init() {
         // see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
         response.headers[
           'content-security-policy'
-        ] = `default-src * 'unsafe-inline'; font-src * data: 'unsafe-inline'; connect-src * 'unsafe-inline'; style-src * 'unsafe-inline'; script-src * 'unsafe-inline'; img-src *;`
+        ] = `default-src * 'unsafe-inline'; font-src * data: 'unsafe-inline'; connect-src * 'unsafe-inline'; frame-src * 'unsafe-inline'; style-src * 'unsafe-inline'; child-src * 'unsafe-inline'; script-src * 'unsafe-inline'; img-src *; media-src * 'unsafe-inline'; object-src * 'unsafe-inline'`
         // proxypack custom headers
         // response.statusCode = 203
         response.headers['proxypack-interceptor-type'] = 'domain'

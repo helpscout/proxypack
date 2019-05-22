@@ -1,4 +1,3 @@
-const proxyServer = require('../proxyServer')
 const state = require('../proxyServer/state')
 const webpackServer = require('./server')
 
@@ -6,7 +5,6 @@ class ProxyPackPlugin {
   constructor({
     browser,
     domain,
-    dynamicMappings,
     externalMappings,
     localDist,
     localMappings,
@@ -17,11 +15,10 @@ class ProxyPackPlugin {
     this.opts = {
       fields: ['entrypoints', 'assetsByChunkName'],
     }
-    this.proxyServer = proxyServer
+    this.proxyServer = require('../proxyServer')
     this.proxyServer.init({
       browser,
       domain,
-      dynamicMappings,
       externalMappings,
       localDist,
       localMappings,

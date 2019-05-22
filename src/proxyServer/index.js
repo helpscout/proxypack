@@ -1,7 +1,6 @@
 const hoxy = require('hoxy')
 const state = require('./state')
 const domainInterceptor = require('./interceptors/domain')
-const dynamicInterceptor = require('./interceptors/dynamic')
 const externalInterceptor = require('./interceptors/external')
 const localInterceptor = require('./interceptors/local')
 const rpcServer = require('../rpcServer/index')
@@ -52,7 +51,7 @@ function initProxyServer() {
         webpackMappings,
       } = state.get()
 
-      proxyServer._server.timeout = 1500000
+      proxyServer._server.timeout = 15000000
 
       domainInterceptor.init()
 
@@ -86,7 +85,6 @@ module.exports = {
   init({
     browser = '',
     domain = '',
-    dynamicMappings = [],
     externalMappings = {},
     localDist = '',
     localMappings = {},
@@ -99,7 +97,6 @@ module.exports = {
       state.set({
         browser,
         domain,
-        dynamicMappings,
         externalMappings,
         isInit: true,
         localDist,
