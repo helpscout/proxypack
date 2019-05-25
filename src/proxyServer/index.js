@@ -14,18 +14,13 @@ function addInterceptorForDomain({ proxyServer, domain }) {
   })
 }
 
-function setOptions({ browser, domain: _domain }) {
-  const { domain, proxyServer } = state.get()
-  if (domain !== _domain) {
-    state.set({ browser, domain: _domain })
-    // if the domain has changed, we need to add an interceptor for it
-    addInterceptorForDomain({
-      domain: _domain,
-      proxyServer,
-    })
-  } else {
-    state.set({ browser, domain })
-  }
+function onDomainChange(domain) {
+  state.set({ domain })
+  const { proxyServer } = state.get()
+  addInterceptorForDomain({
+    domain,
+    proxyServer,
+  })
 }
 
 function addExternalMappingsInterceptor() {
@@ -112,7 +107,7 @@ module.exports = {
           externalMappings && addExternalMappingsInterceptor()
         },
         onSetCachingRef: state.setCachingRef,
-        onSetOptions: setOptions,
+        onDomainChange: onDomainChange,
       })
     }
   },

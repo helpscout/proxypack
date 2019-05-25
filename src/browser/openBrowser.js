@@ -15,7 +15,7 @@ function openBrowser({ browser, domain }) {
         options: [
           '--disable-web-security',
           '--disable-extensions',
-          '--ignore-certificate-errors'
+          '--ignore-certificate-errors',
         ],
       },
       function(error, instance) {
@@ -24,7 +24,7 @@ function openBrowser({ browser, domain }) {
           return
         }
         console.log(
-          `🎭 ProxyPack instance started for ${domain} in ${browser}.`,
+          `🎭 ProxyPack browser instance started for ${domain} in ${browser}.`,
         )
         // instance.process.unref()
         // instance.process.stdin.unref()

@@ -3,7 +3,7 @@ const url = require('url')
 const openBrowser = require('../browser/openBrowser')
 const state = require('../proxyServer/state')
 
-function init({ onSetCachingRef, onExternalMappingsChange, onSetOptions }) {
+function init({ onSetCachingRef, onExternalMappingsChange, onDomainChange }) {
   const server = http.createServer(requestListener)
   const PORT = 17777
   console.log(`🎭 ProxyPackRPCServer started on localhost:${PORT}`)
@@ -31,7 +31,14 @@ function init({ onSetCachingRef, onExternalMappingsChange, onSetOptions }) {
     setOptions: {
       exec({ browser = 'chrome', domain }) {
         return new Promise(resolve => {
-          onSetOptions({ browser, domain })
+          if (browser) {
+            state.set({ browser })
+          }
+
+          if (domain) {
+            onDomainChange(domain)
+          }
+
           resolve({
             browser,
             domain,
