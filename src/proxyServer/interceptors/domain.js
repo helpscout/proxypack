@@ -7,6 +7,7 @@
 
 const log = require('../../logger/')
 const state = require('../state')
+const Policy = require('csp-parse')
 
 function init() {
   const { domain, proxyServer, localWebpackServerURL } = state.get()
@@ -59,11 +60,13 @@ function init() {
           targetUrl: domain + '/*',
           type: 'domain',
         })
+
+        const policy = new Policy(response.headers['content-security-policy'])
+        policy.add('script-src', localWebpackServerURL)
+
         // hack the CSP header
         // see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
-        response.headers[
-          'content-security-policy'
-        ] = `default-src * 'unsafe-inline'; font-src * data: 'unsafe-inline'; connect-src * 'unsafe-inline'; frame-src * 'unsafe-inline'; style-src * 'unsafe-inline'; child-src * 'unsafe-inline'; script-src * 'unsafe-inline'; img-src *; media-src * 'unsafe-inline'; object-src * 'unsafe-inline'`
+        response.headers['content-security-policy'] = policy.toString()
         // proxypack custom headers
         // response.statusCode = 203
         response.headers['proxypack-interceptor-type'] = 'domain'
