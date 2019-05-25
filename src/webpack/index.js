@@ -15,6 +15,9 @@ class ProxyPackPlugin {
     this.opts = {
       fields: ['entrypoints', 'assetsByChunkName'],
     }
+    // hoxy has a self starting server, so this require needs to be here,
+    // or else just importing proxypack will blow things up a little as
+    // a server will auto instantiate
     this.proxyServer = require('../proxyServer')
     this.proxyServer.init({
       browser,
