@@ -12,11 +12,7 @@ function openBrowser({ browser, domain }) {
         proxy: 'localhost:7777',
         browser: browser,
         detached: true,
-        options: [
-          '--disable-web-security',
-          '--disable-extensions',
-          '--ignore-certificate-errors',
-        ],
+        options: ['--disable-web-security', '--ignore-certificate-errors'],
       },
       function(error, instance) {
         if (error) {
