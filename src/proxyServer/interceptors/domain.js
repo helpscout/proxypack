@@ -61,12 +61,15 @@ function init() {
           type: 'domain',
         })
 
-        const policy = new Policy(response.headers['content-security-policy'])
-        policy.add('script-src', localWebpackServerURL)
+        const currentPolicy = response.headers['content-security-policy']
 
-        // hack the CSP header
-        // see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
-        response.headers['content-security-policy'] = policy.toString()
+        // if a CSP Header exists we merge our localWebpackServerURL into it
+        if (currentPolicy) {
+          const policy = new Policy(response.headers['content-security-policy'])
+          policy.add('script-src', localWebpackServerURL)
+          response.headers['content-security-policy'] = policy.toString()
+        }
+
         // proxypack custom headers
         // response.statusCode = 203
         response.headers['proxypack-interceptor-type'] = 'domain'
