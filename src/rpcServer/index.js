@@ -9,6 +9,13 @@ function init({ onSetCachingRef, onExternalMappingsChange, onDomainChange }) {
   console.log(`🎭 ProxyPackRPCServer started on localhost:${PORT}`)
 
   const methods = {
+    getLogs: {
+      exec(getLogs) {
+        return new Promise(resolve => {
+          resolve(['logging things'])
+        })
+      },
+    },
     setExternalMappings: {
       exec(externalMappings) {
         return new Promise(resolve => {
