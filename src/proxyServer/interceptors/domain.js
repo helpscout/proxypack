@@ -1,8 +1,9 @@
-/**
- This interceptor is the first one too get hit in the stack of interceptors.
- Therefore some interesting things happen in this file. CSP needs a custom
- header, we inject an HTML banner and also check if we need to re-write scripts
- on the page.
+/*
+This interceptor is the first one too get hit in the stack of interceptors.
+  - CSP headers are checked and merged if they exist
+  - we search the page for any script tags
+  - if they are webpack scripts, we proxy them
+  - we inject an HTML banner into the page
  */
 
 const log = require('../../logger/')
@@ -23,15 +24,14 @@ function init() {
       targetUrl: domain + '/*',
     })
     function handleInterceptor(request, response, cycle) {
-      /*  The domain is the first thing that loads, so we set the branch name here
-      beacause it could have changed between refreshes, instead of detecting when
-      a new git branch is checked out, we can just set it when the browser loads */
-      // in the case of working from Webpack4 chunks, the number of scripts
-      // may not be the same in local as prod, this is why we remove the scripts
-      // and then re-add them
+      /*
+      In the case of working with Webpack4 chunks, the number of scripts on the
+      page may not be the same in Local as on Prod (beacuse of code spliting,
+      the script can change when you are working on it), the hashes  may also
+      not match, this is why we remove the scripts, and then readd them
+      */
       try {
         const scriptGroups = {}
-
         // get all the script groups
         response.$('script[webpack-entry]').each(function(index) {
           const newScript = response.$(this).attr('webpack-entry')
