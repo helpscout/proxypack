@@ -1,22 +1,26 @@
 const fs = require('fs')
 const path = require('path')
 const branchName = require('branch-name')
+const CONFIG = require('../constants/config')
 
 let state = {
   branchName: '',
   browser: 'chrome',
   cachingRef: '',
-  certAuthority: {
-    key: fs.readFileSync(
-      path.resolve(__dirname, '../assets/ssl/proxypack.key.pem'),
-    ),
-    cert: fs.readFileSync(
-      path.resolve(__dirname, '../assets/ssl/proxypack.crt.pem'),
-    ),
+  cert: {
+    ca: {
+      cert: fs.readFileSync(path.resolve(__dirname, CONFIG.SSL_CERTS.CA)),
+      key: fs.readFileSync(path.resolve(__dirname, CONFIG.SSL_CERTS.CA_KEY)),
+    },
+    server: {
+      cert: fs.readFileSync(path.resolve(__dirname, CONFIG.SSL_CERTS.SERVER)),
+      key: fs.readFileSync(
+        path.resolve(__dirname, CONFIG.SSL_CERTS.SERVER_KEY),
+      ),
+    },
   },
   domain: '',
   dynamicMappings: [],
-  localSSLDir: '',
   localWebpackServerURL: '',
   isLoggingEnabled: true,
   externalResources: {},
