@@ -8,7 +8,6 @@ class ProxyPackPlugin {
     externalMappings,
     localDist,
     localMappings,
-    localSSLDir,
     localWebpackServerURL,
     webpackMappings,
   }) {
@@ -25,7 +24,6 @@ class ProxyPackPlugin {
       externalMappings,
       localDist,
       localMappings,
-      localSSLDir,
       localWebpackServerURL,
       webpackMappings,
     })
