@@ -4,14 +4,17 @@ const PROXY_PACK_CONFIG_DIR = CONFIG.PROXY_PACK_CONFIG_DIR
 
 function install() {
   // remove directory if it already exists
-  shell.rm('-rf', PROXY_PACK_CONFIG_DIR)
-  shell.mkdir('-p', PROXY_PACK_CONFIG_DIR)
+  // shell.exec('sudo rm -rf', `${PROXY_PACK_CONFIG_DIR}/*`)
+  shell.exec(`sudo rm -R ${PROXY_PACK_CONFIG_DIR}`)
+  shell.exec(`sudo mkdir -p ${PROXY_PACK_CONFIG_DIR}`)
 
   console.log('Create root authority certificate:', '\n')
 
   // Create your very own Root Certificate Authority
   shell.exec(
-    [`openssl`, `genrsa`, `-out ${CONFIG.SSL_CERTS.CA_KEY} 2048`].join(' '),
+    [`sudo`, `openssl`, `genrsa`, `-out ${CONFIG.SSL_CERTS.CA_KEY} 2048`].join(
+      ' ',
+    ),
   )
 
   console.log('\n', 'Self signing:', '\n')
@@ -20,6 +23,7 @@ function install() {
   // Since this is private, the details can be as bogus as you like
   shell.exec(
     [
+      `sudo`,
       `openssl`,
       `req`,
       `-x509`,
@@ -38,9 +42,13 @@ function install() {
   // such as example.com, *.example.com, awesome.example.com
   // NOTE: You MUST match CN to the domain name or ip address you want to use
   shell.exec(
-    [`openssl`, `genrsa`, `-out ${CONFIG.SSL_CERTS.SERVER_KEY}`, `2048`].join(
-      ' ',
-    ),
+    [
+      `sudo`,
+      `openssl`,
+      `genrsa`,
+      `-out ${CONFIG.SSL_CERTS.SERVER_KEY}`,
+      `2048`,
+    ].join(' '),
   )
 
   console.log('\n', 'Sign request from device:', '\n')
@@ -48,6 +56,7 @@ function install() {
   // Create a request from your Device, which your Root CA will sign
   shell.exec(
     [
+      `sudo`,
       `openssl`,
       `req`,
       `-new`,
@@ -60,6 +69,7 @@ function install() {
   // Sign the request from Device with your Root CA
   shell.exec(
     [
+      `sudo`,
       `openssl`,
       `x509`,
       `-req`,
@@ -75,7 +85,8 @@ function install() {
   // add CA to keychain
   shell.exec(
     [
-      `sudo security`,
+      `sudo`,
+      `security`,
       `add-trusted-cert`,
       `-d -r trustRoot -k`,
       `/Library/Keychains/System.keychain ${CONFIG.SSL_CERTS.CA}`,
