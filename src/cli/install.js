@@ -3,6 +3,11 @@ const shell = require('shelljs')
 const PROXY_PACK_CONFIG_DIR = CONFIG.PROXY_PACK_CONFIG_DIR
 
 function install() {
+  if (!shell.which('openssl')) {
+    shell.echo('Sorry, this script requires openssl')
+    shell.exit(1)
+  }
+
   // remove directory if it already exists
   // shell.exec('sudo rm -rf', `${PROXY_PACK_CONFIG_DIR}/*`)
   shell.exec(`sudo rm -R ${PROXY_PACK_CONFIG_DIR}`)
