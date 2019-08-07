@@ -1,5 +1,3 @@
-const state = require('../proxyServer/state')
-
 class ProxyPackPlugin {
   constructor({
     browser,
@@ -13,9 +11,9 @@ class ProxyPackPlugin {
     this.opts = {
       fields: ['entrypoints', 'assetsByChunkName'],
     }
-    // these servers start as soon as you include them, and also include other
-    // things, this prevents them from starting in tests envs, unless the
-    // webpack plugin has been started
+    // we load stuff here to make sure that nothing is followed in other
+    // environments, unless this plugin has first been instantiated
+    this.state = require('../proxyServer/state')
     this.webpackServer = require('./server')
     this.proxyServer = require('../proxyServer')
     this.proxyServer.init({
@@ -30,7 +28,7 @@ class ProxyPackPlugin {
   }
 
   apply(compiler, compilation) {
-    state.set({ webpackOutputPath: compiler.options.output.path })
+    this.state.set({ webpackOutputPath: compiler.options.output.path })
 
     if (compiler.hooks) {
       compiler.hooks.emit.tapPromise(
@@ -73,7 +71,7 @@ class ProxyPackPlugin {
             throw err
           }
 
-          state.set({
+          this.state.set({
             webpackEntries: statsStr.entrypoints,
             assetsByChunkName: statsStr.assetsByChunkName,
           })
