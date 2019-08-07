@@ -1,5 +1,4 @@
 const state = require('../proxyServer/state')
-const webpackServer = require('./server')
 
 class ProxyPackPlugin {
   constructor({
@@ -14,9 +13,10 @@ class ProxyPackPlugin {
     this.opts = {
       fields: ['entrypoints', 'assetsByChunkName'],
     }
-    // hoxy has a self starting server, so this require needs to be here,
-    // or else just importing proxypack will blow things up a little as
-    // a server will auto instantiate
+    // these servers start as soon as you include them, and also include other
+    // things, this prevents them from starting in tests envs, unless the
+    // webpack plugin has been started
+    this.webpackServer = require('./server')
     this.proxyServer = require('../proxyServer')
     this.proxyServer.init({
       browser,
@@ -77,7 +77,7 @@ class ProxyPackPlugin {
             webpackEntries: statsStr.entrypoints,
             assetsByChunkName: statsStr.assetsByChunkName,
           })
-          webpackServer.init()
+          this.webpackServer.init()
           if (callback) {
             return void callback()
           }
