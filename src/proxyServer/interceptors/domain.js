@@ -68,7 +68,6 @@ function init() {
         if (currentPolicy) {
           const policy = new Policy(response.headers['content-security-policy'])
           policy.add('script-src', localWebpackServerURL)
-          policy.add('connect-src', 'wss://proxypack.local.sumoci.net:1337')
           response.headers['content-security-policy'] = policy.toString()
         }
 
