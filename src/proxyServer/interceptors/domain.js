@@ -9,7 +9,6 @@ This interceptor is the first one too get hit in the stack of interceptors.
 const log = require('../../logger/')
 const state = require('../state')
 const Policy = require('csp-parse')
-const clientEmbed = require('../../ws/clientEmbed')
 
 function init() {
   const { domain, proxyServer, localWebpackServerURL } = state.get()
@@ -54,7 +53,6 @@ function init() {
             `<script>window.proxyPackDynamicUrl='${localWebpackServerURL}/'</script>`,
           )
 
-          scriptsForWebpackEntryPoint.unshift(`<script>${clientEmbed}</script>`)
           scriptGroups[scriptGroup].replaceWith(scriptsForWebpackEntryPoint)
         }
 
