@@ -1,6 +1,3 @@
-const state = require('../proxyServer/state')
-const webpackServer = require('./server')
-
 class ProxyPackPlugin {
   constructor({
     browser,
@@ -8,16 +5,16 @@ class ProxyPackPlugin {
     externalMappings,
     localDist,
     localMappings,
-    localSSLDir,
     localWebpackServerURL,
     webpackMappings,
   }) {
     this.opts = {
       fields: ['entrypoints', 'assetsByChunkName'],
     }
-    // hoxy has a self starting server, so this require needs to be here,
-    // or else just importing proxypack will blow things up a little as
-    // a server will auto instantiate
+    // we load stuff here to make sure that nothing is followed in other
+    // environments, unless this plugin has first been instantiated
+    this.state = require('../proxyServer/state')
+    this.webpackServer = require('./server')
     this.proxyServer = require('../proxyServer')
     this.proxyServer.init({
       browser,
@@ -25,14 +22,13 @@ class ProxyPackPlugin {
       externalMappings,
       localDist,
       localMappings,
-      localSSLDir,
       localWebpackServerURL,
       webpackMappings,
     })
   }
 
   apply(compiler, compilation) {
-    state.set({ webpackOutputPath: compiler.options.output.path })
+    this.state.set({ webpackOutputPath: compiler.options.output.path })
 
     if (compiler.hooks) {
       compiler.hooks.emit.tapPromise(
@@ -75,11 +71,11 @@ class ProxyPackPlugin {
             throw err
           }
 
-          state.set({
+          this.state.set({
             webpackEntries: statsStr.entrypoints,
             assetsByChunkName: statsStr.assetsByChunkName,
           })
-          webpackServer.init()
+          this.webpackServer.init()
           if (callback) {
             return void callback()
           }

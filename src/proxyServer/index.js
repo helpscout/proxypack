@@ -33,10 +33,10 @@ function addExternalMappingsInterceptor() {
 }
 
 function initProxyServer() {
-  const { certAuthority, port } = state.get()
+  const { cert, port } = state.get()
 
   const proxyServer = hoxy
-    .createServer({ certAuthority })
+    .createServer({ certAuthority: cert.ca })
     .listen(port, status => {
       // to do change these to getters
       const {
@@ -83,7 +83,6 @@ module.exports = {
     externalMappings = {},
     localDist = '',
     localMappings = {},
-    localSSLDir,
     localWebpackServerURL,
     webpackMappings = [],
   }) {
@@ -96,7 +95,6 @@ module.exports = {
         isInit: true,
         localDist,
         localMappings,
-        localSSLDir,
         localWebpackServerURL,
         webpackMappings,
       })
