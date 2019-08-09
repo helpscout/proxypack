@@ -33,6 +33,13 @@ function get() {
   return state
 }
 
+function getDebugInfo() {
+  // pluck off things with circular references
+  const { cert, proxyServer, ...rest } = state
+  console.log(rest)
+  return rest
+}
+
 function set(newState) {
   state = { ...state, ...newState }
 }
@@ -97,6 +104,7 @@ function setBranchName() {
 
 module.exports = {
   get,
+  getDebugInfo,
   getLocalUriFromAssetsByChunkName,
   getLocalAssetURIsForWebpackEntry,
   set,

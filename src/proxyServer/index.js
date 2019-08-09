@@ -4,6 +4,7 @@ const domainInterceptor = require('./interceptors/domain')
 const externalInterceptor = require('./interceptors/external')
 const localInterceptor = require('./interceptors/local')
 const rpcServer = require('../rpcServer/index')
+const wsServer = require('../ws/index')
 const webpackInterceptor = require('./interceptors/webpack')
 
 function addInterceptorForDomain({ proxyServer, domain }) {
