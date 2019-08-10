@@ -42,7 +42,7 @@ function initProxyServer() {
       const {
         externalMappings,
         localMappings,
-        webpackOutputPath,
+        webpackCompilerLocalOutputPath,
         webpackMappings,
       } = state.get()
 
@@ -56,7 +56,7 @@ function initProxyServer() {
         webpackInterceptor.init({
           proxyServer,
           webpackMappings,
-          webpackOutputPath,
+          webpackCompilerLocalOutputPath,
         })
 
       localMappings &&
@@ -83,7 +83,6 @@ module.exports = {
     externalMappings = {},
     localDist = '',
     localMappings = {},
-    localWebpackServerURL,
     webpackMappings = [],
   }) {
     const { isInit } = state.get()
@@ -95,7 +94,6 @@ module.exports = {
         isInit: true,
         localDist,
         localMappings,
-        localWebpackServerURL,
         webpackMappings,
       })
       initProxyServer()

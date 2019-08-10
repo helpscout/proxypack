@@ -1,10 +1,8 @@
+const CONFIG = require('../constants/config')
 const fs = require('fs')
 const path = require('path')
-const branchName = require('branch-name')
-const CONFIG = require('../constants/config')
 
 let state = {
-  branchName: '',
   browser: 'chrome',
   cachingRef: '',
   cert: {
@@ -21,12 +19,11 @@ let state = {
   },
   domain: '',
   dynamicMappings: [],
-  localWebpackServerURL: '',
   isLoggingEnabled: true,
   externalResources: {},
   isInit: false,
   port: 7777,
-  webpackOutputPath: '',
+  webpackCompilerLocalOutputPath: '',
 }
 
 function get() {
@@ -54,7 +51,7 @@ function updateExternalResource(externalResource) {
 // virtualURIs are intercepted from the virutal domain
 function getLocalAssetURIsForWebpackEntry(entryName) {
   return (
-    state.webpackOutputPath &&
+    state.webpackCompilerLocalOutputPath &&
     state.webpackEntries &&
     state.webpackEntries[entryName].assets
       .filter(filename => {
@@ -62,7 +59,7 @@ function getLocalAssetURIsForWebpackEntry(entryName) {
         return filename.split('.').pop() !== 'map'
       })
       .map(filename => {
-        return state.localWebpackServerURL + '/' + filename
+        return CONFIG.LOCAL_WEBPACK_SERVER.URI + '/' + filename
       })
   )
 }
@@ -70,7 +67,7 @@ function getLocalAssetURIsForWebpackEntry(entryName) {
 // returns an array, right now only being used for dynamic imports
 function getLocalUriFromAssetsByChunkName(entryName, isMap) {
   if (
-    !state.webpackOutputPath ||
+    !state.webpackCompilerLocalOutputPath ||
     !state.assetsByChunkName ||
     !state.assetsByChunkName[entryName]
   ) {
@@ -79,20 +76,13 @@ function getLocalUriFromAssetsByChunkName(entryName, isMap) {
 
   // this needs some tweaking but works for now
   if (isMap) {
-    // return []
-    return (
-      state.localWebpackServerURL + '/' + state.assetsByChunkName[entryName][1]
-    )
+    return `${CONFIG.LOCAL_WEBPACK_SERVER.URI}/${
+      state.assetsByChunkName[entryName][1]
+    }`
   }
-  return (
-    state.localWebpackServerURL + '/' + state.assetsByChunkName[entryName][0]
-  )
-}
-
-function setBranchName() {
-  return branchName.get().then(name => {
-    set({ branchName: name })
-  })
+  return `${CONFIG.LOCAL_WEBPACK_SERVER.URI}/${
+    state.assetsByChunkName[entryName][0]
+  }`
 }
 
 module.exports = {
@@ -100,7 +90,6 @@ module.exports = {
   getLocalUriFromAssetsByChunkName,
   getLocalAssetURIsForWebpackEntry,
   set,
-  setBranchName,
   setCachingRef,
   setExternalMappings,
   updateExternalResource,
