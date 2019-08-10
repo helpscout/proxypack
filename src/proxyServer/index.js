@@ -4,7 +4,6 @@ const domainInterceptor = require('./interceptors/domain')
 const externalInterceptor = require('./interceptors/external')
 const localInterceptor = require('./interceptors/local')
 const rpcServer = require('../rpcServer/index')
-const webpackInterceptor = require('./interceptors/webpack')
 
 function addInterceptorForDomain({ proxyServer, domain }) {
   domainInterceptor.init({
@@ -51,13 +50,6 @@ function initProxyServer() {
       domainInterceptor.init()
 
       externalMappings && addExternalMappingsInterceptor(proxyServer)
-
-      webpackMappings &&
-        webpackInterceptor.init({
-          proxyServer,
-          webpackMappings,
-          webpackCompilerLocalOutputPath,
-        })
 
       localMappings &&
         localInterceptor.init({

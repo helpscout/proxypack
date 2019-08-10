@@ -34,7 +34,7 @@ const init = function() {
         }
       })
     })
-    .listen(27777)
+    .listen(CONFIG.LOCAL_WEBPACK_SERVER.PORT)
 }
 
 module.exports = {
