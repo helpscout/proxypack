@@ -14,9 +14,9 @@ function init({ localMappings, proxyServer }) {
 
       return getLocalFile(_localLocation).then(file => {
         response.statusCode = 203
-        response.buffer = file
+        response.buffer = file.buffer
+        response.headers['content-type'] = file.contentType
         response.headers['proxypack-interceptor-local'] = _localLocation
-
         log.handleInterceptor({
           proxyUrl: _localLocation,
           targetUrl: request.url,
