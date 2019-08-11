@@ -28,7 +28,9 @@ class ProxyPackPlugin {
   }
 
   apply(compiler, compilation) {
-    this.state.set({ webpackOutputPath: compiler.options.output.path })
+    this.state.set({
+      webpackCompilerLocalOutputPath: compiler.options.output.path,
+    })
 
     if (compiler.hooks) {
       compiler.hooks.emit.tapPromise(

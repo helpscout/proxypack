@@ -9,7 +9,7 @@ const init = function() {
 
   isInit = true
 
-  const { webpackOutputPath, cert } = state.get()
+  const { webpackCompilerLocalOutputPath, cert } = state.get()
 
   require('ssl-root-cas')
     .inject()
@@ -22,7 +22,10 @@ const init = function() {
 
   https
     .createServer(options, function(request, response) {
-      fs.readFile(webpackOutputPath + request.url, function(err, data) {
+      fs.readFile(webpackCompilerLocalOutputPath + request.url, function(
+        err,
+        data,
+      ) {
         if (!err) {
           response.writeHead(203, { 'proxy-pack-source': 'webpack server' })
           response.write(data || '')

@@ -8,7 +8,6 @@ const rpcServer = require('../rpcServer/index')
 function addInterceptorForDomain({ proxyServer, domain }) {
   domainInterceptor.init({
     domain,
-    getLocalAssetURIsForWebpackEntry: state.getLocalAssetURIsForWebpackEntry,
     proxyServer,
   })
 }
@@ -38,12 +37,7 @@ function initProxyServer() {
     .createServer({ certAuthority: cert.ca })
     .listen(port, status => {
       // to do change these to getters
-      const {
-        externalMappings,
-        localMappings,
-        webpackCompilerLocalOutputPath,
-        webpackMappings,
-      } = state.get()
+      const { externalMappings, localMappings, webpackMappings } = state.get()
 
       proxyServer._server.timeout = 15000000
 
