@@ -6,7 +6,6 @@ class ProxyPackPlugin {
     localDist,
     localMappings,
     localWebpackServerURL,
-    webpackMappings,
   }) {
     this.opts = {
       fields: ['entrypoints', 'assetsByChunkName'],
@@ -23,7 +22,6 @@ class ProxyPackPlugin {
       localDist,
       localMappings,
       localWebpackServerURL,
-      webpackMappings,
     })
   }
 

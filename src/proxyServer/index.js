@@ -37,7 +37,7 @@ function initProxyServer() {
     .createServer({ certAuthority: cert.ca })
     .listen(port, status => {
       // to do change these to getters
-      const { externalMappings, localMappings, webpackMappings } = state.get()
+      const { externalMappings, localMappings } = state.get()
 
       proxyServer._server.timeout = 15000000
 
@@ -69,7 +69,6 @@ module.exports = {
     externalMappings = {},
     localDist = '',
     localMappings = {},
-    webpackMappings = [],
   }) {
     const { isInit } = state.get()
     if (!isInit) {
@@ -80,7 +79,6 @@ module.exports = {
         isInit: true,
         localDist,
         localMappings,
-        webpackMappings,
       })
       initProxyServer()
       rpcServer.init({
