@@ -1,4 +1,5 @@
 const CONFIG = require('../constants/config')
+const getLocalFile = require('../utils/getLocalFile')
 const https = require('https')
 const state = require('../proxyServer/state')
 const fs = require('fs')
@@ -9,7 +10,7 @@ const init = function() {
 
   isInit = true
 
-  const { webpackOutputPath, cert } = state.get()
+  const { webpackCompilerLocalOutputPath, cert } = state.get()
 
   require('ssl-root-cas')
     .inject()
@@ -22,19 +23,24 @@ const init = function() {
 
   https
     .createServer(options, function(request, response) {
-      fs.readFile(webpackOutputPath + request.url, function(err, data) {
-        if (!err) {
-          response.writeHead(203, { 'proxy-pack-source': 'webpack server' })
-          response.write(data || '')
+      const path = `${webpackCompilerLocalOutputPath}${request.url}`
+
+      getLocalFile(path)
+        .then(file => {
+          response.writeHead(203, {
+            'proxy-pack-webpack-server': path,
+            'content-type': file.contentType,
+          })
+          response.write(file.buffer || '')
           response.end()
-        } else {
+        })
+        .catch(err => {
           response.writeHead(500)
           response.write(err)
           response.end()
-        }
-      })
+        })
     })
-    .listen(27777)
+    .listen(CONFIG.LOCAL_WEBPACK_SERVER.PORT)
 }
 
 module.exports = {

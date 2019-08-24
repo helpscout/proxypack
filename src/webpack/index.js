@@ -6,7 +6,6 @@ class ProxyPackPlugin {
     localDist,
     localMappings,
     localWebpackServerURL,
-    webpackMappings,
   }) {
     this.opts = {
       fields: ['entrypoints', 'assetsByChunkName'],
@@ -23,12 +22,13 @@ class ProxyPackPlugin {
       localDist,
       localMappings,
       localWebpackServerURL,
-      webpackMappings,
     })
   }
 
   apply(compiler, compilation) {
-    this.state.set({ webpackOutputPath: compiler.options.output.path })
+    this.state.set({
+      webpackCompilerLocalOutputPath: compiler.options.output.path,
+    })
 
     if (compiler.hooks) {
       compiler.hooks.emit.tapPromise(
