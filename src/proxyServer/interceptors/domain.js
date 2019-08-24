@@ -67,7 +67,7 @@ function init() {
 
         // if a CSP Header exists we merge our local webpack server uri into it
         if (currentPolicy) {
-          const policy = new Policy(currentPolicy)
+          const policy = new Policy(response.headers['content-security-policy'])
           policy.add('script-src', CONFIG.LOCAL_WEBPACK_SERVER.URI)
           response.headers['content-security-policy'] = policy.toString()
         }
