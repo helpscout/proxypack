@@ -73,7 +73,6 @@ function init() {
         }
 
         // proxypack custom headers
-        response.statusCode = 203
         response.headers['proxypack-interceptor-type'] = 'domain'
         response.$('body').prepend(banner.join(' '))
       } catch (error) {
