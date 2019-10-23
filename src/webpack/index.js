@@ -24,8 +24,8 @@ class ProxyPackPlugin {
     this.getHook = getHook
     this.isLegacyTapable = isLegacyTapable
 
-    const { DYNAMIC_IMPORT_URL, PLUGIN_NAME } = require('../constants/config')
-    this.DYNAMIC_IMPORT_URL = DYNAMIC_IMPORT_URL
+    const { LOCAL_WEBPACK_SERVER, PLUGIN_NAME } = require('../constants/config')
+    this.LOCAL_WEBPACK_SERVER = LOCAL_WEBPACK_SERVER
     this.PLUGIN_NAME = PLUGIN_NAME
 
     this.proxyServer.init({
@@ -65,16 +65,11 @@ class ProxyPackPlugin {
     this.getHook(mainTemplate, 'require-extensions')((source, chunk, hash) => {
       const buildCode = [
         'try {',
-        `  if (typeof ${this.DYNAMIC_IMPORT_URL} !== "string") {`,
-        `    throw new Error("${this.PLUGIN_NAME}: '${
-          this.DYNAMIC_IMPORT_URL
-        }' is not a string or not available at runtime. See https://github.com/agoldis/webpack-require-from#troubleshooting");`,
-        '  }',
-        `  return ${this.DYNAMIC_IMPORT_URL};`,
+        `  return '${this.LOCAL_WEBPACK_SERVER.URI}/';`,
         '} catch (e) {',
         `console.error("${
           this.PLUGIN_NAME
-        }: There was a problem with the dynamic imports url")`,
+        }: There was a problem with the public path.")`,
         '}',
       ].join('\n')
 
