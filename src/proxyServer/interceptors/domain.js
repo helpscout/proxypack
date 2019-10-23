@@ -5,7 +5,10 @@ This interceptor is the first one too get hit in the stack of interceptors.
   - if they are webpack scripts, we proxy them
   - we inject an HTML banner into the page
  */
-const CONFIG = require('../../constants/config')
+const {
+  LOCAL_WEBPACK_SERVER,
+  DYNAMIC_IMPORT_URL,
+} = require('../../constants/config')
 const log = require('../../logger/')
 const state = require('../state')
 const Policy = require('csp-parse')
@@ -50,8 +53,8 @@ function init() {
               return `<script src="${_entry}" proxypack-entry="${scriptGroup}" type="text/javascript"></script>`
             })
           scriptsForWebpackEntryPoint.unshift(
-            `<script>window.proxyPackDynamicUrl='${
-              CONFIG.LOCAL_WEBPACK_SERVER.URI
+            `<script>window.${DYNAMIC_IMPORT_URL}='${
+              LOCAL_WEBPACK_SERVER.URI
             }/'</script>`,
           )
           scriptGroups[scriptGroup].replaceWith(scriptsForWebpackEntryPoint)
@@ -68,7 +71,11 @@ function init() {
         // if a CSP Header exists we merge our local webpack server uri into it
         if (currentPolicy) {
           const policy = new Policy(response.headers['content-security-policy'])
-          policy.add('script-src', CONFIG.LOCAL_WEBPACK_SERVER.URI)
+          policy.add('script-src', LOCAL_WEBPACK_SERVER.URI)
+          policy.add('script-src', 'http://localhost:3001')
+          policy.add('connect-src', 'http://localhost:3001')
+          policy.add('connect-src', 'https://beaconapi.helpscout.net')
+
           response.headers['content-security-policy'] = policy.toString()
         }
 
