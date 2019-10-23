@@ -10,12 +10,12 @@ class ProxyPackPlugin {
     this.opts = {
       fields: ['entrypoints', 'assetsByChunkName'],
     }
-    /** In the past ProxyPack has blown up in other environments. They seem to
+    /* In the past ProxyPack has blown up in other environments. They seem to
     follow and execute all our files on include. (for example jenkins). I'm not
     sure if it's a webpack problem or a jenkins problem, but it seems like the
     safest way to deal with this is to not require things until we've
     instantiated the plugin
-    **/
+    */
     this.state = require('../proxyServer/state')
     this.webpackServer = require('./server')
     this.proxyServer = require('../proxyServer')

@@ -64,10 +64,6 @@ function init() {
         if (currentPolicy) {
           const policy = new Policy(response.headers['content-security-policy'])
           policy.add('script-src', LOCAL_WEBPACK_SERVER.URI)
-          policy.add('script-src', 'http://localhost:3001')
-          policy.add('connect-src', 'http://localhost:3001')
-          policy.add('connect-src', 'https://beaconapi.helpscout.net')
-
           response.headers['content-security-policy'] = policy.toString()
         }
 
