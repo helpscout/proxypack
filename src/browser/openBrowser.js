@@ -1,7 +1,12 @@
 const launcher = require('@james-proxy/james-browser-launcher')
 const openFirefox = require('./firefox')
+const safari = require('./safari')
 
 function openBrowser({ browser, domain }) {
+  if (browser === 'safari') {
+    safari.setupSafariProxy()
+  }
+
   if (browser === 'firefox') {
     openFirefox(domain)
   } else {
@@ -31,6 +36,9 @@ function openBrowser({ browser, domain }) {
           // instance.process.stdout.unref()
           // instance.process.stderr.unref()
           instance.on('stop', function(code) {
+            if (browser === 'safari') {
+              safari.teardownSafariProxy()
+            }
             console.log('Instance stopped with exit code:', code)
           })
         },
