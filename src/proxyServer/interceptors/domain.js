@@ -5,13 +5,13 @@ This interceptor is the first one too get hit in the stack of interceptors.
   - if they are webpack scripts, we proxy them
   - we inject an HTML banner into the page
  */
-
+const { LOCAL_WEBPACK_SERVER } = require('../../constants/config')
 const log = require('../../logger/')
 const state = require('../state')
 const Policy = require('csp-parse')
 
 function init() {
-  const { domain, proxyServer, localWebpackServerURL } = state.get()
+  const { domain, proxyServer } = state.get()
 
   const banner = [
     '<div style="display: block; text-align: center; padding: 7px; width: 100%; background-color: #ffcc00; color: #000000; border-top: 1px solid #fff; box-sizing: border-box;">',
@@ -49,10 +49,6 @@ function init() {
             .map(_entry => {
               return `<script src="${_entry}" proxypack-entry="${scriptGroup}" type="text/javascript"></script>`
             })
-          scriptsForWebpackEntryPoint.unshift(
-            `<script>window.proxyPackDynamicUrl='${localWebpackServerURL}/'</script>`,
-          )
-
           scriptGroups[scriptGroup].replaceWith(scriptsForWebpackEntryPoint)
         }
 
@@ -64,15 +60,14 @@ function init() {
 
         const currentPolicy = response.headers['content-security-policy']
 
-        // if a CSP Header exists we merge our localWebpackServerURL into it
+        // if a CSP Header exists we merge our local webpack server uri into it
         if (currentPolicy) {
           const policy = new Policy(response.headers['content-security-policy'])
-          policy.add('script-src', localWebpackServerURL)
+          policy.add('script-src', LOCAL_WEBPACK_SERVER.URI)
           response.headers['content-security-policy'] = policy.toString()
         }
 
         // proxypack custom headers
-        // response.statusCode = 203
         response.headers['proxypack-interceptor-type'] = 'domain'
         response.$('body').prepend(banner.join(' '))
       } catch (error) {

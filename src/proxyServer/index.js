@@ -5,12 +5,10 @@ const externalInterceptor = require('./interceptors/external')
 const localInterceptor = require('./interceptors/local')
 const rpcServer = require('../rpcServer/index')
 const wsServer = require('../ws/index')
-const webpackInterceptor = require('./interceptors/webpack')
 
 function addInterceptorForDomain({ proxyServer, domain }) {
   domainInterceptor.init({
     domain,
-    getLocalAssetURIsForWebpackEntry: state.getLocalAssetURIsForWebpackEntry,
     proxyServer,
   })
 }
@@ -39,26 +37,13 @@ function initProxyServer() {
   const proxyServer = hoxy
     .createServer({ certAuthority: cert.ca })
     .listen(port, status => {
-      // to do change these to getters
-      const {
-        externalMappings,
-        localMappings,
-        webpackOutputPath,
-        webpackMappings,
-      } = state.get()
+      const { externalMappings, localMappings } = state.get()
 
       proxyServer._server.timeout = 15000000
 
       domainInterceptor.init()
 
       externalMappings && addExternalMappingsInterceptor(proxyServer)
-
-      webpackMappings &&
-        webpackInterceptor.init({
-          proxyServer,
-          webpackMappings,
-          webpackOutputPath,
-        })
 
       localMappings &&
         localInterceptor.init({
@@ -84,8 +69,6 @@ module.exports = {
     externalMappings = {},
     localDist = '',
     localMappings = {},
-    localWebpackServerURL,
-    webpackMappings = [],
   }) {
     const { isInit } = state.get()
     if (!isInit) {
@@ -96,8 +79,6 @@ module.exports = {
         isInit: true,
         localDist,
         localMappings,
-        localWebpackServerURL,
-        webpackMappings,
       })
       initProxyServer()
       rpcServer.init({

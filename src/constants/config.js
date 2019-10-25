@@ -1,6 +1,11 @@
 const PROXY_PACK_CONFIG_DIR = `${process.env['HOME']}/.proxypack`
 
 module.exports = {
+  LOCAL_WEBPACK_SERVER: {
+    PORT: 27777,
+    URI: 'https://localhost:27777',
+  },
+  PLUGIN_NAME: 'PROXY PACK',
   PROXY_PACK_CONFIG_DIR,
   SSL_CERTS: {
     CA: `${PROXY_PACK_CONFIG_DIR}/proxypack-private-root-ca.crt.pem`,
