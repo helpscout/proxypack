@@ -36,7 +36,6 @@ function initProxyServer() {
   const proxyServer = hoxy
     .createServer({ certAuthority: cert.ca })
     .listen(port, status => {
-      // to do change these to getters
       const { externalMappings, localMappings } = state.get()
 
       proxyServer._server.timeout = 15000000

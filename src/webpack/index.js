@@ -10,11 +10,24 @@ class ProxyPackPlugin {
     this.opts = {
       fields: ['entrypoints', 'assetsByChunkName'],
     }
-    // we load stuff here to make sure that nothing is followed in other
-    // environments, unless this plugin has first been instantiated
+    /* In the past ProxyPack has blown up in other environments. They seem to
+    follow and execute all our files on include. (for example jenkins). I'm not
+    sure if it's a webpack problem or a jenkins problem, but it seems like the
+    safest way to deal with this is to not require things until we've
+    instantiated the plugin
+    */
     this.state = require('../proxyServer/state')
     this.webpackServer = require('./server')
     this.proxyServer = require('../proxyServer')
+
+    const { getHook, isLegacyTapable } = require('./utils')
+    this.getHook = getHook
+    this.isLegacyTapable = isLegacyTapable
+
+    const { LOCAL_WEBPACK_SERVER, PLUGIN_NAME } = require('../constants/config')
+    this.LOCAL_WEBPACK_SERVER = LOCAL_WEBPACK_SERVER
+    this.PLUGIN_NAME = PLUGIN_NAME
+
     this.proxyServer.init({
       browser,
       domain,
@@ -25,19 +38,51 @@ class ProxyPackPlugin {
     })
   }
 
-  apply(compiler, compilation) {
+  apply(compiler) {
     this.state.set({
       webpackCompilerLocalOutputPath: compiler.options.output.path,
     })
 
-    if (compiler.hooks) {
-      compiler.hooks.emit.tapPromise(
-        'proxypack-plugin',
-        this.emitStats.bind(this),
-      )
-    } else {
-      compiler.plugin('emit', this.emitStats.bind(this))
-    }
+    this.getHook(compiler, 'compilation')(this.replacePublicPath.bind(this))
+    this.getHook(compiler, 'emit')(this.emitStats.bind(this))
+  }
+
+  /* Borrowed from: https://www.npmjs.com/package/webpack-require-from
+    Webpack allows to automatically split and load code using require.ensure or
+   dynamic import import(). Those modules are fetched on-demand when your main
+   bundle is running in browser. Webpack loads the modules (chunks) from a static
+   URL, which is determined by config.output.publicPath of webpack configuration.
+
+   In this case we are overwritting this path to make sure that dynamic imports
+   are resolved via ProxyPack's local node server.
+
+   This url is injected into the web browser, via the domain interceptor,
+   but since webpack compiles this path we also need to make reference to it
+   in source code..
+  */
+  replacePublicPath(compiler) {
+    const { mainTemplate } = compiler
+    this.getHook(mainTemplate, 'require-extensions')((source, chunk, hash) => {
+      const buildCode = [
+        'try {',
+        `  return '${this.LOCAL_WEBPACK_SERVER.URI}/';`,
+        '} catch (e) {',
+        `console.error("${
+          this.PLUGIN_NAME
+        }: There was a problem with the public path.")`,
+        '}',
+      ].join('\n')
+
+      return [
+        source,
+        `// ProxyPackDynamicUrl`,
+        'Object.defineProperty(' + mainTemplate.requireFn + ', "p", {',
+        '  get: function () {',
+        buildCode,
+        ' }',
+        '})',
+      ].join('\n')
+    })
   }
 
   emitStats(curCompiler, callback) {

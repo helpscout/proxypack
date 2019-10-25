@@ -2,7 +2,6 @@
 const program = require('safe-commander')
 const browser = require('../browser')
 const install = require('./install')
-const shell = require('shelljs')
 
 program
   .version('0.1.0')

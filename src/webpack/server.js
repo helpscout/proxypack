@@ -2,7 +2,6 @@ const CONFIG = require('../constants/config')
 const getLocalFile = require('../utils/getLocalFile')
 const https = require('https')
 const state = require('../proxyServer/state')
-const fs = require('fs')
 let isInit = false
 
 const init = function() {
