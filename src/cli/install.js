@@ -9,9 +9,13 @@ function install() {
   }
 
   // remove directory if it already exists
-  // shell.exec('sudo rm -rf', `${PROXY_PACK_CONFIG_DIR}/*`)
   shell.exec(`sudo rm -R ${PROXY_PACK_CONFIG_DIR}`)
+
+  // add directory
   shell.exec(`sudo mkdir -p ${PROXY_PACK_CONFIG_DIR}`)
+
+  // set permissions
+  shell.exec(`sudo chmod 777 ${PROXY_PACK_CONFIG_DIR}`)
 
   console.log('Create root authority certificate:', '\n')
 
