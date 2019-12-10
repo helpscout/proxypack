@@ -9,9 +9,10 @@ const { LOCAL_WEBPACK_SERVER } = require('../../constants/config')
 const log = require('../../logger/')
 const state = require('../state')
 const Policy = require('csp-parse')
+const url = require('url')
 
 function init() {
-  const { domain, proxyServer } = state.get()
+  const { domain, externalMappings, proxyServer } = state.get()
 
   const banner = [
     '<div style="display: block; text-align: center; padding: 7px; width: 100%; background-color: #ffcc00; color: #000000; border-top: 1px solid #fff; box-sizing: border-box;">',
@@ -64,6 +65,11 @@ function init() {
         if (currentPolicy) {
           const policy = new Policy(response.headers['content-security-policy'])
           policy.add('script-src', LOCAL_WEBPACK_SERVER.URI)
+
+          Object.values(externalMappings).forEach(value => {
+            const _url = url.parse(value)
+            policy.add('script-src', `${_url.protocol}//${_url.host}`)
+          })
           response.headers['content-security-policy'] = policy.toString()
         }
 
@@ -90,7 +96,7 @@ function init() {
       handleInterceptor,
     )
   }
-  domain && addInterceptor(domain)
+  domain && addInterceptor(domain, externalMappings)
 }
 
 module.exports = {
