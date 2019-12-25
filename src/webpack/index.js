@@ -10,11 +10,12 @@ class ProxyPackPlugin {
     this.opts = {
       fields: ['entrypoints', 'assetsByChunkName'],
     }
-    /* In the past ProxyPack has blown up in other environments. They seem to
-    follow and execute all our files on include. (for example jenkins). I'm not
-    sure if it's a webpack problem or a jenkins problem, but it seems like the
+    /*
+    In the past ProxyPack has blown up in other environments. Someseem to
+    follow and execute all our files on require. (for example Jenkins). I'm not
+    sure if it's a Webpack problem or a Jenkins problem, but it seems like the
     safest way to deal with this is to not require things until we've
-    instantiated the plugin
+    instantiated the plugin.
     */
     this.state = require('../proxyServer/state')
     this.webpackServer = require('./server')
@@ -53,12 +54,8 @@ class ProxyPackPlugin {
    bundle is running in browser. Webpack loads the modules (chunks) from a static
    URL, which is determined by config.output.publicPath of webpack configuration.
 
-   In this case we are overwritting this path to make sure that dynamic imports
-   are resolved via ProxyPack's local node server.
-
-   This url is injected into the web browser, via the domain interceptor,
-   but since webpack compiles this path we also need to make reference to it
-   in source code..
+   In this case we are overwritting / adding this path to the source code to
+   make sure that dynamic imports are resolved via ProxyPack's local node server.
   */
   replacePublicPath(compiler) {
     const { mainTemplate } = compiler
@@ -85,10 +82,15 @@ class ProxyPackPlugin {
     })
   }
 
+  /*
+  Most of this was stolen from https://github.com/FormidableLabs/webpack-stats-plugin.
+  ProxyPack needs to know about the structure of Webpack files. Instead of outputting
+  a JSON file, we just save this data to memory so we can use later when ProxyPack
+  needs to look up files.
+  */
   emitStats(curCompiler, callback) {
     let stats = curCompiler.getStats().toJson()
 
-    // Filter stats fields
     if (this.opts.fields) {
       stats = this.opts.fields.reduce((memo, key) => {
         memo[key] = stats[key]
@@ -96,36 +98,31 @@ class ProxyPackPlugin {
       }, {})
     }
 
-    // Transform to string
     let err
-    return (
-      Promise.resolve()
-        .then(() => stats)
-        .catch(e => {
-          err = e
-        })
+    return Promise.resolve()
+      .then(() => stats)
+      .catch(e => {
+        err = e
+      })
 
-        // Finish up.
-        .then(statsStr => {
-          // Handle errors.
-          if (err) {
-            curCompiler.errors.push(err)
-            if (callback) {
-              return void callback(err)
-            }
-            throw err
-          }
-
-          this.state.set({
-            webpackEntries: statsStr.entrypoints,
-            assetsByChunkName: statsStr.assetsByChunkName,
-          })
-          this.webpackServer.init()
+      .then(statsStr => {
+        if (err) {
+          curCompiler.errors.push(err)
           if (callback) {
-            return void callback()
+            return void callback(err)
           }
+          throw err
+        }
+
+        this.state.set({
+          webpackEntries: statsStr.entrypoints,
+          assetsByChunkName: statsStr.assetsByChunkName,
         })
-    )
+        this.webpackServer.init()
+        if (callback) {
+          return void callback()
+        }
+      })
   }
 }
 

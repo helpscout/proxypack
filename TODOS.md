@@ -1,5 +1,5 @@
 TODOS:
-
+- fix images
 - add hard refresh to openBrowser, either by Flag or some other method
 - add a filter to make sure that the request is from the domain that is declared (the target domain of the browser passed by either webpack or CLI)
 - add a how to or other explanation

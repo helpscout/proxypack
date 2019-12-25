@@ -1,7 +1,8 @@
 const state = require('../proxyServer/state')
 const isEnabled = state.get().isLoggingEnabled
 const chalk = require('chalk')
-const _log = console.log
+const wsServer = require('../ws')
+const _log = wsServer.sendMessage
 const line =
   '-----------------------------------------------------------------------------'
 
